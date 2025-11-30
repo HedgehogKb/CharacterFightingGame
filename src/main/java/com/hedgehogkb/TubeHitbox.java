@@ -91,12 +91,30 @@ public class TubeHitbox {
             }
         }
 
-        //TODO: add circle intersects line checks
-        double circleTheta1 = Math.PI / 2 - theta1;
-        double circleTheta2 = Math.PI / 2 - theta2;
+        //Cirle to Tube Body Intersections
 
-        
-                                                    
+        // Check each circle of this tube against the other tube's center line segment
+        Point2D[] thisCircles = {circle1, circle2};
+        for (Point2D c : thisCircles) {
+            double closestX = closestLineX(o.circle1, o.circle2, c);
+            double distance = lineDistance(o.circle1, o.circle2, c);
+            if (distance <= radius + o.radius
+            && closestX >= Math.min(o.circle1.getX(), o.circle2.getX())
+            && closestX <= Math.max(o.circle1.getX(), o.circle2.getX())) {
+            return true;
+            }
+        }
+        // Check each circle of the other tube against this tube's center line segment
+        Point2D[] otherCircles = {o.circle1, o.circle2};
+        for (Point2D c : otherCircles) {
+            double closestX = closestLineX(circle1, circle2, c);
+            double distance = lineDistance(circle1, circle2, c);
+            if (distance <= radius + o.radius
+            && closestX >= Math.min(circle1.getX(), circle2.getX())
+            && closestX <= Math.max(circle1.getX(), circle2.getX())) {
+            return true;
+            }
+        }
         
 
         return false;
@@ -113,10 +131,26 @@ public class TubeHitbox {
         }
 
         double xIntersect = (b1 - b2) / (m2 - m1);
-        //return (xIntersect >= Math.max(Math.min(p1.getX(), p2.getX()), Math.min(q1.getX(), q2.getX())) &&
-                //xIntersect <= Math.min(Math.max(p1.getX(), p2.getX()), Math.max(q1.getX(), q2.getX())));
         return xIntersect >= Math.min(p1.getX(), p2.getX()) && xIntersect <= Math.max(p1.getX(), p2.getX()) &&
                xIntersect >= Math.min(q1.getX(), q2.getX()) && xIntersect <= Math.max(q1.getX(), q2.getX());
+    }
+
+    public double lineDistance(Point2D p1, Point2D p2, Point2D o) {
+        double slope = (p2.getY() - p1.getY()) / (p2.getX() - p1.getX());
+        double a = -1;
+        double b = slope;
+        double c = -1 * slope * p1.getX() + p1.getY();
+
+        return Math.abs(a*o.getX() + b*o.getY() + c) / Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
+    }
+
+    public double closestLineX(Point2D p1, Point2D p2, Point2D o) {
+        double slope = (p2.getY() - p1.getY()) / (p2.getX() - p1.getX());
+        double a = -1;
+        double b = slope;
+        double c = -1 * slope * p1.getX() + p1.getY();
+
+        return o.getX() - a * (a*o.getX() + b*o.getY() + c) / (Math.pow(a, 2) + Math.pow(b, 2));
     }
 
     //GETTERS AND SETTERS
