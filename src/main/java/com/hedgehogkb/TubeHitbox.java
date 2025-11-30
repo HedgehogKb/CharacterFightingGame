@@ -137,8 +137,8 @@ public class TubeHitbox {
 
     public double lineDistance(Point2D p1, Point2D p2, Point2D o) {
         double slope = (p2.getY() - p1.getY()) / (p2.getX() - p1.getX());
-        double a = -1;
-        double b = slope;
+        double a = slope;
+        double b = -1;
         double c = -1 * slope * p1.getX() + p1.getY();
 
         return Math.abs(a*o.getX() + b*o.getY() + c) / Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));

@@ -15,8 +15,8 @@ public class TestDisplay {
 
     public TestDisplay(String title, int width, int height) {
         ArrayList<TubeHitbox> hitboxes = new ArrayList<>();
-        hitboxes.add(new TubeHitbox(100, 100, 400, 400, 20));
-        hitboxes.add(new TubeHitbox(100, 400, 200, 290, 40));
+        hitboxes.add(new TubeHitbox(100, 105, 400, 400, 20));
+        hitboxes.add(new TubeHitbox(250, 166, 300, 100, 40));
 
         frame = new JFrame(title);
         frame.setSize(width, height);
