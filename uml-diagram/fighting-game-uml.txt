@@ -1,0 +1,75 @@
+@startuml
+interface Hitbox {
+    + boolean intersects()
+}
+class TubeHitbox {
+    - Point2d circle1
+    - Point2d circle2
+    - double radius
+    + boolean intersects()
+}
+
+class RectHitbox {
+    - Point2d point
+    - double width
+    - double height
+}
+
+class Fighter {
+    - ArrayList<TubeHitbox> movementHitboxes
+    - ArrayList<TubeHitbox> attackHitboxes
+    - RectHitbox collisionHitbox
+}
+
+
+class AnimationHandler {
+    - HashMap<MoveType, Animation>
+    + AnimationFrame getCurFrame()
+}
+
+class Animation {
+    - boolean looping
+    - ArrayList<AnimationFrame> frames
+    + void startAnimation(double deltaTime)
+    + AnimationFrame getFrame()
+}
+
+class AnimationFrame {
+    + double duration
+    + Image sprite
+    + ArrayList<Hitbox> movementHitboxes
+    + ArrayList<Hitbox> attackHitboxes
+    + ArrayList<Projectile> projectiles;
+}
+
+class MoveHandler {
+    + void setInput()
+    + MoveType getMove()
+}
+
+class Move {
+    + double duration
+    + MoveType moveType
+}
+
+enum MoveType {
+    STANDING, FALLING, WALKING, SPRINTING,\n NGROUND, UGROUND, SGROUND, NAIR, UAIR, SAIR
+}
+
+note "gives the current state of the character be it standing,\n falling running, an attack, etc. This can be used to\n select an animation." as N1
+
+Hitbox <-- TubeHitbox
+Hitbox <-- RectHitbox
+
+AnimationHandler *-- Animation
+Animation *-- AnimationFrame
+
+MoveHandler +-- Move
+
+Fighter *-- TubeHitbox
+Fighter *-- RectHitbox
+Fighter *-- AnimationHandler
+Fighter *-- MoveHandler
+
+N1 .. MoveHandler
+@enduml

@@ -1,10 +1,9 @@
-package com.hedgehogkb;
+package com.hedgehogkb.hitboxes;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.geom.Point2D;
 
-public class TubeHitbox {
+public class TubeHitbox implements Hitbox<TubeHitbox>{
     private Point2D circle1;
     private Point2D circle2;
     private double radius;
@@ -50,8 +49,18 @@ public class TubeHitbox {
         g.drawPolygon(xPoints, yPoints, 4);
     }
 
+    @Override
     public boolean intersects(TubeHitbox o) {
-        //TODO: add bounding circle check for optimization
+        //See if hitboxes are near enough to possibly intersect
+        Point2D center = findCenterpoint(circle1, circle2);
+        double tube1Length = Point2D.distance(circle1.getX(), circle1.getY(), circle2.getX(), circle2.getY()) + 2*radius;
+        Point2D otherCenter = findCenterpoint(o.circle1, o.circle2);
+        double tube2Length = Point2D.distance(o.circle1.getX(), o.circle1.getY(), o.circle2.getX(), o.circle2.getY()) + 2*o.radius;
+        double centerDistance = Point2D.distance(center.getX(), center.getY(), otherCenter.getX(), otherCenter.getY());
+        if (centerDistance > tube1Length/2 + tube2Length/2) {
+            System.out.println("Exited due to not being close at all.");
+            return false;
+        }
 
         //Circle Intersection
         if (circle1.distance(o.circle1) <= this.radius + o.radius) return true;
@@ -118,6 +127,12 @@ public class TubeHitbox {
         
 
         return false;
+    }
+
+    public Point2D findCenterpoint(Point2D p1, Point2D p2) {
+        double centerX = (p1.getX() + p2.getX())/2.0;
+        double centerY = (p1.getY() + p2.getY())/2.0;
+        return new Point2D.Double(centerX, centerY);
     }
 
     public boolean linesIntersect(Point2D p1, Point2D p2, Point2D q1, Point2D q2) {
