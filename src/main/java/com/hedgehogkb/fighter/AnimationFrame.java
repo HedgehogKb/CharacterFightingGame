@@ -12,4 +12,7 @@ public class AnimationFrame {
     public List<TubeHitbox> hurtboxes;
     public List<TubeHitbox> attackHitboxs;
     //public List<Projectile> projectiles;
+
+    public double xVelo;
+    public double yVelo;
 }

@@ -56,6 +56,26 @@ enum MoveType {
     STANDING, FALLING, WALKING, SPRINTING,\n NGROUND, UGROUND, SGROUND, NAIR, UAIR, SAIR
 }
 
+class Stage {
+    - Image stageSprite
+    - Image backgroundSprite
+    ..
+    - ArrayList<RectHitbox> hitboxes
+    ..
+    - Camera camera
+    - double preferedZoom
+}
+
+class Camera {
+
+}
+
+class Battle {
+    - ArrayList<Fighter> fighters
+    - Stage stage
+    - ArrayList<Projectile> projectiles
+}
+
 note "gives the current state of the character be it standing,\n falling running, an attack, etc. This can be used to\n select an animation." as N1
 
 Hitbox <-- TubeHitbox
@@ -70,6 +90,11 @@ Fighter *-- TubeHitbox
 Fighter *-- RectHitbox
 Fighter *-- AnimationHandler
 Fighter *-- MoveHandler
+
+Stage <-- Camera
+
+Battle *-- Fighter
+Battle *-- Stage
 
 N1 .. MoveHandler
 @enduml

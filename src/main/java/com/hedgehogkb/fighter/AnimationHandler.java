@@ -1,19 +1,18 @@
-package com.hedgehogkb.stage;
+package com.hedgehogkb.fighter;
+
+import java.util.HashMap;
 
 public class AnimationHandler {
-    //private GameCharacter character;
+    HashMap<MoveType, Animation> animations;
 
-    public AnimationHandler(GameCharacter character) {
-        //this.character = character;
+    public AnimationHandler() {
     }
 
-    /* public AnimationFrame getAnimation() {
-        double charXPos = character.getXPos();
-        //does some stuff with the information it's got from the character.
-        return new AnimationFrame();
-    } */
-
-    public AnimationFrame getAnimationMethod2(double charXPos) {
-        return new AnimationFrame();
+    public AnimationFrame getAnimationMethod2(MoveType moveType, double currentTime) {
+        Animation animation = animations.get(moveType);
+        if (animation != null) {
+            return animation.getCurrentFrame(currentTime);
+        }
+        throw new IllegalArgumentException("No animation found for move type: " + moveType);
     }
 }

@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import com.hedgehogkb.hitboxes.TubeHitbox;
+
 public class TestDisplay {
     private JFrame frame;
     private JPanel panel;
