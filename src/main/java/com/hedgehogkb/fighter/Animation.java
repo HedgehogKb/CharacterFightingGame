@@ -4,14 +4,20 @@ import java.util.ArrayList;
 
 public class Animation {
     ArrayList<AnimationFrame> frames;
-    private double startTime;
+
+    private double elapsedTime;
     private int currentFrameIndex;
     private double nextEndTime;
     private final double ANIMATION_DURATION;
 
     public Animation(ArrayList<AnimationFrame> frames) {
+        if (frames.isEmpty()) {
+            throw new IllegalArgumentException("animaiton must have at least 1 frame");
+        }
+
         this.frames = frames;
-        this.startTime = -1;
+
+        this.elapsedTime = -1;
         this.currentFrameIndex = 0;
         this.nextEndTime = -1;
 
@@ -22,20 +28,22 @@ public class Animation {
         this.ANIMATION_DURATION = animationTime;
     }
 
-    public void startAnimation(double currentTime) {
-        this.startTime = currentTime;
+    public void startAnimation() {
+        this.elapsedTime = 0;
         this.currentFrameIndex = 0;
         this.nextEndTime = frames.get(0).duration;
     }
 
-    public AnimationFrame getCurrentFrame(double currentTime) {
-        if (startTime == -1) {
-            startTime = currentTime;
+    public AnimationFrame getCurrentFrame(double deltaTime) {
+        if (elapsedTime == -1) {
+            throw new IllegalStateException("Animation hasn't been started");
         }
 
-        double elapsedTime = (currentTime - startTime) % ANIMATION_DURATION; //loops animation. MoveHanlder is responsible for actually stopping moves.
-        double frameTime = 0;
+        //loops animation. MoveHanlder is responsible for actually stopping moves.
+        elapsedTime = (elapsedTime + deltaTime) % ANIMATION_DURATION; 
 
+        // responsible for advancing or restarting the current frame index.
+        // also sets the nextEndTime to the new frame
         if (elapsedTime > nextEndTime) {
             currentFrameIndex++;
             if (currentFrameIndex >= frames.size()) {

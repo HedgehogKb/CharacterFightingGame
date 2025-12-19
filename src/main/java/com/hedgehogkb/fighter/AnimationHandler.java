@@ -4,15 +4,25 @@ import java.util.HashMap;
 
 public class AnimationHandler {
     HashMap<MoveType, Animation> animations;
+    Animation curAnimation;
 
     public AnimationHandler() {
     }
 
-    public AnimationFrame getAnimationMethod2(MoveType moveType, double currentTime) {
+    public void setAnimation(MoveType moveType) { //origionally called getAnimationMethod2 if you want to be funny
         Animation animation = animations.get(moveType);
-        if (animation != null) {
-            return animation.getCurrentFrame(currentTime);
+        if (animation == null) {
+            throw new IllegalArgumentException("No animation found for move type: " + moveType);
         }
-        throw new IllegalArgumentException("No animation found for move type: " + moveType);
+
+        if (curAnimation == animation) { //this should work because they point to the same animation. you can use equals method otherwise
+            return;
+        }
+        curAnimation = animation;
+        curAnimation.startAnimation();
+    }
+
+    public AnimationFrame getCurrentFrame(double deltaTime) {
+        return curAnimation.getCurrentFrame(deltaTime);
     }
 }

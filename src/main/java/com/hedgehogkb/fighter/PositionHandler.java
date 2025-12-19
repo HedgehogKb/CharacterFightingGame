@@ -3,8 +3,6 @@ package com.hedgehogkb.fighter;
 import javax.swing.text.Position;
 
 public class PositionHandler {
-    private double lastDeltaTime;
-
     private double xPos;
     private double yPos;
     private double xVel;
@@ -15,9 +13,7 @@ public class PositionHandler {
     private double maxXVel;
     private double maxYVel;
 
-    public PositionHandler(double xPos, double yPos, double maxXVel, double maxYVel, double lastDeltaTime) {
-        this.lastDeltaTime = lastDeltaTime;
-        
+    public PositionHandler(double xPos, double yPos, double maxXVel, double maxYVel) {        
         this.xPos = xPos;
         this.yPos = yPos;
         this.xVel = 0;
@@ -36,22 +32,24 @@ public class PositionHandler {
         return yPos;
     }
 
-    public void updatePosition(double deltaTime) {
-        double elapsedTime = (deltaTime - lastDeltaTime);
+    public void updateXPos(double deltaTime) {
         // Update velocities based on acceleration
-        xVel += xAcc * elapsedTime;
-        yVel += yAcc * elapsedTime;
+        xVel += xAcc * deltaTime;
 
         // Clamp velocities to max values
         if (xVel > maxXVel) xVel = maxXVel;
         if (xVel < -maxXVel) xVel = -maxXVel;
-        if (yVel > maxYVel) yVel = maxYVel;
-        if (yVel < -maxYVel) yVel = -maxYVel;
 
         // Update positions based on velocities
-        xPos += xVel * elapsedTime;
-        yPos += yVel * elapsedTime;
+        xPos += xVel * deltaTime;
+    }
+
+    public void updateYPos(double deltaTime) {
+        yVel += yAcc * deltaTime;
         
-        lastDeltaTime = deltaTime;
+        if (yVel > maxYVel) yVel = maxYVel;
+        if (yVel < -maxYVel) yVel = -maxYVel;
+        
+        yPos += yVel * deltaTime;
     }
 }

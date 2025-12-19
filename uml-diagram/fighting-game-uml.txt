@@ -24,7 +24,8 @@ class Fighter {
 
 class AnimationHandler {
     - HashMap<MoveType, Animation>
-    + AnimationFrame getCurFrame()
+    + void setAnimation()
+    + AnimationFrame getCurFrame(double deltaTime)
 }
 
 class Animation {
@@ -70,10 +71,26 @@ class Camera {
 
 }
 
-class Battle {
+abstract Projectile {
+
+}
+
+class PhysicsProjectile {
+
+}
+
+class BeamProjectile {
+
+}
+
+class BattleRunner {
     - ArrayList<Fighter> fighters
     - Stage stage
     - ArrayList<Projectile> projectiles
+
+    + void run()
+    - void update()
+    - void render()
 }
 
 note "gives the current state of the character be it standing,\n falling running, an attack, etc. This can be used to\n select an animation." as N1
@@ -93,8 +110,12 @@ Fighter *-- MoveHandler
 
 Stage <-- Camera
 
-Battle *-- Fighter
-Battle *-- Stage
+Projectile <|-- PhysicsProjectile
+Projectile <|-- BeamProjectile
+
+BattleRunner *-- Fighter
+BattleRunner *-- Stage
+BattleRunner *-- Projectile
 
 N1 .. MoveHandler
 @enduml
