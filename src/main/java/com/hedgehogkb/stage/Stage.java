@@ -4,10 +4,12 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.util.ArrayList;
 
+import com.hedgehogkb.stage.platforms.StagePlatform;
+
 public class Stage {
     private Image backgroundSprite;
     private ArrayList<StagePlatform> permanentPlatforms;
-    private ArrayList<StagePlatform> decayingPlatoforms;
+    private ArrayList<StagePlatform> decayingPlatforms;
     
     private Camera camera;
     private double preferedZoom;
@@ -20,4 +22,11 @@ public class Stage {
         
     }
 
+    public ArrayList<StagePlatform> getPermanentPlatforms() {
+        return this.permanentPlatforms;
+    }
+
+    public ArrayList<StagePlatform> getDecayingPlatforms() {
+        return this.decayingPlatforms;
+    }
 }

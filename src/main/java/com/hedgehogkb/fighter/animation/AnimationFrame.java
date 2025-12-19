@@ -1,4 +1,4 @@
-package com.hedgehogkb.fighter;
+package com.hedgehogkb.fighter.animation;
 
 import java.awt.Image;
 import java.util.List;

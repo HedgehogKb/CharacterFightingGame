@@ -1,6 +1,8 @@
-package com.hedgehogkb.fighter;
+package com.hedgehogkb.fighter.animation;
 
 import java.util.HashMap;
+
+import com.hedgehogkb.fighter.MoveType;
 
 public class AnimationHandler {
     HashMap<MoveType, Animation> animations;

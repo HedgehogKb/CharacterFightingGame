@@ -3,7 +3,7 @@ package com.hedgehogkb.hitboxes;
 import java.awt.Graphics;
 import java.awt.geom.Point2D;
 
-public class TubeHitbox implements Hitbox<TubeHitbox>{
+public class TubeHitbox implements LocalHitbox<TubeHitbox>{
     private Point2D circle1;
     private Point2D circle2;
     private double radius;
@@ -51,41 +51,53 @@ public class TubeHitbox implements Hitbox<TubeHitbox>{
 
     @Override
     public boolean intersects(TubeHitbox o) {
+        return intersects(0, 0, o, 0, 0);
+    }
+
+    public boolean intersects(double xOffset, double yOffset, TubeHitbox o, double oXOffset, double oYOffset) {
+        //world space points
+        Point2D c1  = new Point2D.Double(circle1.getX() + xOffset,  circle1.getY() + yOffset);
+        Point2D c2  = new Point2D.Double(circle2.getX() + xOffset,  circle2.getY() + yOffset);
+        Point2D oc1 = new Point2D.Double(o.circle1.getX() + oXOffset, o.circle1.getY() + oYOffset);
+        Point2D oc2 = new Point2D.Double(o.circle2.getX() + oXOffset, o.circle2.getY() + oYOffset);
+        
         //See if hitboxes are near enough to possibly intersect
-        Point2D center = findCenterpoint(circle1, circle2);
-        double tube1Length = Point2D.distance(circle1.getX(), circle1.getY(), circle2.getX(), circle2.getY()) + 2*radius;
-        Point2D otherCenter = findCenterpoint(o.circle1, o.circle2);
-        double tube2Length = Point2D.distance(o.circle1.getX(), o.circle1.getY(), o.circle2.getX(), o.circle2.getY()) + 2*o.radius;
-        double centerDistance = Point2D.distance(center.getX(), center.getY(), otherCenter.getX(), otherCenter.getY());
+        Point2D center = findCenterpoint(c1, c2);
+        double tube1Length = c1.distance(c2) + 2 * radius;
+
+        Point2D otherCenter = findCenterpoint(oc1, oc2);
+        double tube2Length = oc1.distance(oc2) + 2 * o.radius;
+        double centerDistance = center.distance(otherCenter);
         if (centerDistance > tube1Length/2 + tube2Length/2) {
             System.out.println("Exited due to not being close at all.");
             return false;
         }
 
         //Circle Intersection
-        if (circle1.distance(o.circle1) <= this.radius + o.radius) return true;
-        if (circle1.distance(o.circle2) <= this.radius + o.radius) return true;
-        if (circle2.distance(o.circle1) <= this.radius + o.radius) return true;
-        if (circle2.distance(o.circle2) <= this.radius + o.radius) return true;
+        if (c1.distance(oc1) <= radius + o.radius) return true;
+        if (c1.distance(oc2) <= radius + o.radius) return true;
+        if (c2.distance(oc1) <= radius + o.radius) return true;
+        if (c2.distance(oc2) <= radius + o.radius) return true;
 
         //Line Intersections
-        double theta1 = Math.atan2(circle2.getY() - circle1.getY(), circle2.getX() - circle1.getX());
+        double theta1 = Math.atan2(c2.getY() - c1.getY(), c2.getX() - c1.getX());
         double dx1 = radius * Math.sin(theta1);
         double dy1 = radius * Math.cos(theta1);
         Point2D[] points1 = {
-            new Point2D.Double(circle1.getX() + dx1, circle1.getY() - dy1),
-            new Point2D.Double(circle2.getX() + dx1, circle2.getY() - dy1),
-            new Point2D.Double(circle2.getX() - dx1, circle2.getY() + dy1),
-            new Point2D.Double(circle1.getX() - dx1, circle1.getY() + dy1)
+            new Point2D.Double(c1.getX() + dx1, c1.getY() - dy1),
+            new Point2D.Double(c2.getX() + dx1, c2.getY() - dy1),
+            new Point2D.Double(c2.getX() - dx1, c2.getY() + dy1),
+            new Point2D.Double(c1.getX() - dx1, c1.getY() + dy1)
         };
-        double theta2 = Math.atan2(o.circle2.getY() - o.circle1.getY(), o.circle2.getX() - o.circle1.getX());
+
+        double theta2 = Math.atan2(oc2.getY() - oc1.getY(), oc2.getX() - oc1.getX());
         double dx2 = o.radius * Math.sin(theta2);
         double dy2 = o.radius * Math.cos(theta2);
         Point2D[] points2 = {
-            new Point2D.Double(o.circle1.getX() + dx2, o.circle1.getY() - dy2),
-            new Point2D.Double(o.circle2.getX() + dx2, o.circle2.getY() - dy2),
-            new Point2D.Double(o.circle2.getX() - dx2, o.circle2.getY() + dy2),
-            new Point2D.Double(o.circle1.getX() - dx2, o.circle1.getY() + dy2)
+            new Point2D.Double(oc1.getX() + dx2, oc1.getY() - dy2),
+            new Point2D.Double(oc2.getX() + dx2, oc2.getY() - dy2),
+            new Point2D.Double(oc2.getX() - dx2, oc2.getY() + dy2),
+            new Point2D.Double(oc1.getX() - dx2, oc1.getY() + dy2)
         };
 
         for (int i = 0; i < 4; i+=2) {
@@ -103,25 +115,25 @@ public class TubeHitbox implements Hitbox<TubeHitbox>{
         //Cirle to Tube Body Intersections
 
         // Check each circle of this tube against the other tube's center line segment
-        Point2D[] thisCircles = {circle1, circle2};
+        Point2D[] thisCircles = { c1, c2 };
         for (Point2D c : thisCircles) {
-            double closestX = closestLineX(o.circle1, o.circle2, c);
-            double distance = lineDistance(o.circle1, o.circle2, c);
-            if (distance <= radius + o.radius
-            && closestX >= Math.min(o.circle1.getX(), o.circle2.getX())
-            && closestX <= Math.max(o.circle1.getX(), o.circle2.getX())) {
-            return true;
+            double closestX = closestLineX(oc1, oc2, c);
+            double distance = lineDistance(oc1, oc2, c);
+            if (distance <= radius + o.radius &&
+                closestX >= Math.min(oc1.getX(), oc2.getX()) &&
+                closestX <= Math.max(oc1.getX(), oc2.getX())) {
+                return true;
             }
         }
         // Check each circle of the other tube against this tube's center line segment
-        Point2D[] otherCircles = {o.circle1, o.circle2};
+        Point2D[] otherCircles = { oc1, oc2 };
         for (Point2D c : otherCircles) {
-            double closestX = closestLineX(circle1, circle2, c);
-            double distance = lineDistance(circle1, circle2, c);
-            if (distance <= radius + o.radius
-            && closestX >= Math.min(circle1.getX(), circle2.getX())
-            && closestX <= Math.max(circle1.getX(), circle2.getX())) {
-            return true;
+            double closestX = closestLineX(c1, c2, c);
+            double distance = lineDistance(c1, c2, c);
+            if (distance <= radius + o.radius &&
+                closestX >= Math.min(c1.getX(), c2.getX()) &&
+                closestX <= Math.max(c1.getX(), c2.getX())) {
+                return true;
             }
         }
         

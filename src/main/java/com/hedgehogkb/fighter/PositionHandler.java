@@ -12,6 +12,8 @@ public class PositionHandler {
 
     private double maxXVel;
     private double maxYVel;
+    private double defaultXAcc; //will be used to set the acceleration back to normal after moving
+    private double defaultYAcc;
 
     public PositionHandler(double xPos, double yPos, double maxXVel, double maxYVel) {        
         this.xPos = xPos;
@@ -25,11 +27,12 @@ public class PositionHandler {
         this.maxYVel = maxYVel;
     }
 
-    public double getXPos() {
-        return xPos;
+    public double getMaxXVel() {
+        return maxXVel;
     }
-    public double getYPos() {
-        return yPos;
+
+    public void setMaxXVel(double maxXVel) {
+        this.maxXVel = maxXVel;
     }
 
     public void updateXPos(double deltaTime) {
@@ -51,5 +54,48 @@ public class PositionHandler {
         if (yVel < -maxYVel) yVel = -maxYVel;
         
         yPos += yVel * deltaTime;
+    }
+
+    // GETTERS AND SETTERS
+        public double getXPos() {
+        return xPos;
+    }
+    public void setXPos(double xPos) {
+        this.xPos = xPos;
+    }
+
+    public double getYPos() {
+        return yPos;
+    }
+    public void setYPos(double yPos) {
+        this.yPos = yPos;
+    }
+
+    public double getXVel() {
+        return xVel;
+    }
+    public void setXVel(double xVel) {
+        this.xVel = xVel;
+    }
+
+    public double getYVel() {
+        return yVel;
+    }
+    public void setYVel(double yVel) {
+        this.yVel = yVel;
+    }
+
+    public double getXAcc() {
+        return xAcc;
+    }
+    public void setXAcc(double xAcc) {
+        this.xAcc = xAcc;
+    }
+
+    public double getYAcc() {
+        return yAcc;
+    }
+    public void setYAcc(double yAcc) {
+        this.yAcc = yAcc;
     }
 }
