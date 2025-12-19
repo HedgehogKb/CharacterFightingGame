@@ -89,7 +89,17 @@ class BattleRunner {
     - ArrayList<Projectile> projectiles
 
     + void run()
+    __ update utility __
     - void update()
+    .. move methods ..
+    - void moveFighters()
+    - boolean stageCollision(Fighter fighter)
+    - void binaryCollisionHandling(Fighter figher, int amount);
+    .. effects methods ..
+    - void calculateEffects()
+    .. attack collision ..
+    - void attackCollision()
+    __ render utility __
     - void render()
 }
 

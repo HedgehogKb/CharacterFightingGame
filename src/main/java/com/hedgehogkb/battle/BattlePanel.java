@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import com.hedgehogkb.fighter.Fighter;
 import com.hedgehogkb.projectile.Projectile;
@@ -40,6 +41,10 @@ public class BattlePanel {
         };
 
         panel.setDoubleBuffered(true);
+    }
+
+    public void repaint() {
+        SwingUtilities.invokeLater(() -> panel.repaint());
     }
 
     public void drawFrame(double deltaTime) {

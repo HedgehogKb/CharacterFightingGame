@@ -55,8 +55,12 @@ public class BattleRunner implements Runnable {
         }
     }
 
+    // UPDATE METHODS \\
+
     private void update(double deltaTime) {
-        
+        moveFighers(deltaTime);
+        runEffects(deltaTime);
+        attackCollision(deltaTime);
     }
 
     private void moveFighers(double deltaTime) {
@@ -69,8 +73,18 @@ public class BattleRunner implements Runnable {
         }
     }
 
+    private void runEffects(double deltaTime) {
+
+    }
+
+    private void attackCollision(double deltaTime) { //not sure deltaTime is actually needed
+
+    }
+
+    // RENDER METHOD \\
+
     private void render() {
-        System.out.println("drawing");
+        //call battlePanel's repaint method.
     }
 
     public static void main(String[] args) {
