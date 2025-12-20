@@ -5,9 +5,12 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import com.hedgehogkb.effects.Effect;
 import com.hedgehogkb.fighter.Fighter;
+import com.hedgehogkb.hitboxes.AttackHitbox;
 import com.hedgehogkb.hitboxes.Hitbox;
 import com.hedgehogkb.hitboxes.RectHitbox;
+import com.hedgehogkb.hitboxes.TubeHitbox;
 import com.hedgehogkb.projectile.Projectile;
 import com.hedgehogkb.stage.Stage;
 import com.hedgehogkb.stage.platforms.PhysicalPlatform;
@@ -81,7 +84,8 @@ public class BattleRunner implements Runnable {
             do {
                 collisions = checkStageHitboxCollision(fighter, T -> !(T instanceof PhysicalPlatform));
                 if (!collisions.isEmpty()) {
-                    handleStageCollisions(fighter, collisions, fighter::setXPos, F -> F.getXVel(), P -> P.getCenterX(), P -> P.getWidth());
+                    handleXStageCollision(fighter, collisions);
+                    fighter.setXVel(0);
                 }
             } while (!collisions.isEmpty());
             
@@ -91,18 +95,18 @@ public class BattleRunner implements Runnable {
             do {
                 collisions = checkStageHitboxCollision(fighter, T -> !(T instanceof PhysicalPlatform));
                 if (!collisions.isEmpty()) {
-                    handleStageCollisions(fighter, collisions, fighter::setYPos, F -> F.getYVel(), 
-                                            P -> {
-                                                return (P.getCenterY() + 0.5 * P.getHeight());
-                                            }, 
-                                            P -> P.getHeight());
+                    if (fighter.getYVel() > 0) {
+                        fighter.setGrounded();
+                    }
+                    handleYStageCollision(fighter, collisions);
+                    fighter.setYVel(0);
                 }
             } while (!collisions.isEmpty());
         
         
             // check for remaining collisions and apply effects (create a per-fighter instance)
             for (StagePlatform platform : checkStageCollision(fighter, T -> true)) {
-                com.hedgehogkb.effects.Effect effect = platform.createEffect(fighter);
+                Effect effect = platform.createEffect(fighter);
                 if (effect != null) {
                     fighter.addEffect(effect);
                 }
@@ -110,6 +114,13 @@ public class BattleRunner implements Runnable {
         }
     }
 
+    /**
+     * Returns each hitbox that the player collides with.
+     * Doesn't provie information about the stage platform, only it's hitboxes.
+     * @param fighter
+     * @param filter
+     * @return
+     */
     private ArrayList<RectHitbox> checkStageHitboxCollision(Fighter fighter, Function<StagePlatform, Boolean> filter) {
         ArrayList<RectHitbox> collidingHitboxes = new ArrayList<>();
         
@@ -121,12 +132,19 @@ public class BattleRunner implements Runnable {
             if (filter.apply(platform)) {
                 continue;
             }
-            platform.colliding(fighter, xPos, yPos, collidingHitboxes); //collding hitboxes passed in so that stages can add to it
+            platform.colliding(fighter, xPos, yPos, collidingHitboxes); //colldingHitboxes passed in so that platforms can add to it
         }
 
         return collidingHitboxes;
     }
 
+    /**
+     * Returns the stage platforms that the player collides with.
+     * This allows for the effects to be applied.
+     * @param fighter
+     * @param filter
+     * @return
+     */
     private ArrayList<StagePlatform> checkStageCollision(Fighter fighter, Function<StagePlatform, Boolean> filter) {
         ArrayList<StagePlatform> collidingHitboxes = new ArrayList<>();
         
@@ -147,7 +165,9 @@ public class BattleRunner implements Runnable {
     }
  
 
-    private void handleStageCollisions(Fighter fighter, ArrayList<RectHitbox> collidingHitboxes, Consumer<Double> posSetter, 
+    /* Good idea but didn't work. Maybe implment in future because cool :)
+
+    private void handleStageCollision(Fighter fighter, ArrayList<RectHitbox> collidingHitboxes, Consumer<Double> posSetter, 
                                         Function<Fighter, Double> veloGetter, Function<RectHitbox, Double> centerGetter, Function<RectHitbox, Double> widthGetter) {
         
         double directionSign = Math.signum(veloGetter.apply(fighter)); //normally takes fighter.getXVelo() in signum
@@ -157,18 +177,68 @@ public class BattleRunner implements Runnable {
 
         //determine largest offset
         boolean initialized = false;
-        double directionMax = 0;
+        double furthestHitboxBound = 0;
         for (RectHitbox hitbox : collidingHitboxes) {
             double hitboxCenter = centerGetter.apply(hitbox); //hitbox.getCenterX();
             double hitboxWidth = widthGetter.apply(hitbox); //hitbox.getWidth();
 
-            double directionOffset = hitboxCenter + (-1 * directionSign) * hitboxWidth;
-            directionOffset = Math.abs(directionOffset);
-            directionMax = (!initialized)? directionOffset : Math.max(directionMax, directionOffset); 
+
         }
 
-        double adjustedPosition = fighter.getXPos() + (directionMax + 1) * directionSign;
+        double adjustedPosition;
         posSetter.accept(adjustedPosition); //fighter.setXPos(adjustedPosition);
+    } */
+
+    private void handleXStageCollision(Fighter fighter, ArrayList<RectHitbox> collidingHitboxes) {
+        double directionSign = Math.signum(fighter.getXVel()); //normally takes fighter.getXVelo() in signum
+        if (directionSign == 0) {
+            throw new IllegalStateException("Cannot handle stage collision if fighter is not moving.");
+        }
+
+        //if plus smallest; if minus largest
+        double furthestHitboxDir = 0;
+        boolean initialized = false;
+        for (RectHitbox hitbox : collidingHitboxes) {
+            double hitboxCenterX = hitbox.getCenterX();
+            double hitboxWidth = hitbox.getWidth();
+
+            double xBound = hitboxCenterX + directionSign * -1 * 0.5 * hitboxWidth;
+            if (directionSign < 0) {
+                furthestHitboxDir = (!initialized)? xBound : Math.min(xBound, furthestHitboxDir);
+            } else {
+                furthestHitboxDir = (!initialized)? xBound : Math.max(xBound, furthestHitboxDir);
+            }
+            initialized = true;
+        }
+
+        double adjustedPosition = furthestHitboxDir - directionSign * (0.5 * fighter.getEnviromentHitbox().getWidth() + 1);
+        fighter.setXPos(adjustedPosition);
+    }
+
+    private void handleYStageCollision(Fighter fighter, ArrayList<RectHitbox> collidingHitboxes) {
+        double directionSign = Math.signum(fighter.getXVel()); //normally takes fighter.getXVelo() in signum
+        if (directionSign == 0) {
+            throw new IllegalStateException("Cannot handle stage collision if fighter is not moving.");
+        }
+
+        //if plus smallest; if minus largest
+        double furthestHitboxDir = 0;
+        boolean initialized = false;
+        for (RectHitbox hitbox : collidingHitboxes) {
+            double hitboxCenterY = hitbox.getCenterY();
+            double hitboxHeight = hitbox.getHeight() * ((directionSign > 0)? 1 : 0); //if going up on screen (negative velocity) important height is at bottom
+
+            double yBound = hitboxCenterY - hitboxHeight;
+            if (directionSign < 0) {
+                furthestHitboxDir = (!initialized)? yBound : Math.min(yBound, furthestHitboxDir);
+            } else {
+                furthestHitboxDir = (!initialized)? yBound : Math.max(yBound, furthestHitboxDir);
+            }
+            initialized = true;
+        }
+
+        double adjustedPosition = furthestHitboxDir + fighter.getEnviromentHitbox().getHeight() * 0.5 * ((directionSign > 0)? 0 : 1) - directionSign;
+        fighter.setYPos(adjustedPosition);
     }
 
     private void runEffects(double deltaTime) {
@@ -187,7 +257,33 @@ public class BattleRunner implements Runnable {
     }
 
     private void attackCollision(double deltaTime) { //not sure deltaTime is actually needed
+        for (int i = 0; i < fighters.size(); i++) {
+            Fighter curFighter = fighters.get(i);
+            double xOffset = curFighter.getXPos();
+            double yOffset = curFighter.getYPos();
+            //loop over all of the other fighters
+            for (int v = 0; v < fighters.size(); i++) {
+                if (v == i) continue;
+                Fighter oFighter = fighters.get(v);
+                double oXOffset = oFighter.getXPos();
+                double oYOffset = oFighter.getYPos();
 
+                double mostDamage = 0;
+                double mostStun = 0;
+                //same for knockback, but might change stuff, so do that later.
+                //loop over all of the player's hurtboxes
+                for (TubeHitbox hurtBox : curFighter.getHurtboxes()) {
+                    for (AttackHitbox attackHitbox : oFighter.getAttackHitboxes()) {
+                        if (hurtBox.intersects(xOffset, yOffset, attackHitbox, oXOffset, oYOffset) {
+                            mostDamage = Math.max(mostDamage, attackHitbox.getDamage());
+                            mostStun = Math.max(mostStun, attackHitbox.getStunDuration());
+                        }
+                    }
+                }
+                curFighter.applyDamage(mostDamage);
+                curFighter.applyStun(mostStun);
+                //TODO: APPLY KNOCKBACK
+            }
     }
 
     // RENDER METHOD \\

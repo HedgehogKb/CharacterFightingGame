@@ -6,7 +6,9 @@ import java.util.ArrayList;
 
 import com.hedgehogkb.effects.Effect;
 import com.hedgehogkb.fighter.animation.AnimationHandler;
+import com.hedgehogkb.hitboxes.AttackHitbox;
 import com.hedgehogkb.hitboxes.RectHitbox;
+import com.hedgehogkb.hitboxes.TubeHitbox;
 
 public class Fighter {
     private final AnimationHandler animHandler;
@@ -15,6 +17,8 @@ public class Fighter {
     private final InputDetector  inputDetector;
 
     private RectHitbox enviromentHitbox;
+    private ArrayList<TubeHitbox> hurtboxes;
+    private ArrayList<AttackHitbox> attackHitboxes;
 
     private double damage;
     private int stocks;

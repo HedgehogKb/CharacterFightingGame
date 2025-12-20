@@ -45,6 +45,7 @@ public class RectHitbox implements LocalHitbox<RectHitbox> {
     public double getWidth() {
         return this.width;
     }
+    
     public double getHeight() {
         return this.heigth;
     }

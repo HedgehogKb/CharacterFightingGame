@@ -40,5 +40,5 @@ public abstract class StagePlatform {
      * Create a new Effect instance that will be applied to the provided fighter when
      * they interact with this platform. Return null if the platform does not apply an effect.
      */
-    public abstract Effect createEffect(com.hedgehogkb.fighter.Fighter fighter);
+    public abstract Effect createEffect(Fighter fighter);
 }
