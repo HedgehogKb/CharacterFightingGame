@@ -265,6 +265,9 @@ public class BattleRunner implements Runnable {
             for (int v = 0; v < fighters.size(); i++) {
                 if (v == i) continue;
                 Fighter oFighter = fighters.get(v);
+                
+                if (!oFighter.canHit(curFighter)) continue;
+
                 double oXOffset = oFighter.getXPos();
                 double oYOffset = oFighter.getYPos();
 
@@ -274,9 +277,10 @@ public class BattleRunner implements Runnable {
                 //loop over all of the player's hurtboxes
                 for (TubeHitbox hurtBox : curFighter.getHurtboxes()) {
                     for (AttackHitbox attackHitbox : oFighter.getAttackHitboxes()) {
-                        if (hurtBox.intersects(xOffset, yOffset, attackHitbox, oXOffset, oYOffset) {
+                        if (hurtBox.intersects(xOffset, yOffset, attackHitbox, oXOffset, oYOffset)) {
                             mostDamage = Math.max(mostDamage, attackHitbox.getDamage());
                             mostStun = Math.max(mostStun, attackHitbox.getStunDuration());
+                            //Same for knockback stuff
                         }
                     }
                 }

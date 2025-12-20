@@ -4,6 +4,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
+import com.hedgehogkb.attack.Attack;
 import com.hedgehogkb.effects.Effect;
 import com.hedgehogkb.fighter.animation.AnimationHandler;
 import com.hedgehogkb.hitboxes.AttackHitbox;
@@ -19,8 +20,10 @@ public class Fighter {
     private RectHitbox enviromentHitbox;
     private ArrayList<TubeHitbox> hurtboxes;
     private ArrayList<AttackHitbox> attackHitboxes;
+    private Attack attack;
 
     private double damage;
+    private double stunCountdown;
     private int stocks;
     private boolean invincible;
 
@@ -54,6 +57,25 @@ public class Fighter {
 
     public void removeEffect(Effect effect) {
         this.effects.remove(effect);
+    }
+
+    public boolean canHit(Fighter o) {
+        if (attack == null) {
+            return true;
+        }
+        
+        return !attack.isMarked(o);
+    }
+
+    public void applyDamage(double damage) {
+        if (invincible) return;
+
+        this.damage += damage;
+    }
+
+    public void applyStun(double duration) {
+        if (stunCountdown > 0) return;
+        stunCountdown = duration;
     }
 
     public java.util.List<Effect> getEffects() {
@@ -94,6 +116,14 @@ public class Fighter {
 
     public RectHitbox getEnviromentHitbox() {
         return this.enviromentHitbox;
+    }
+
+    public ArrayList<TubeHitbox> getHurtboxes() {
+        return this.hurtboxes;
+    }
+
+    public ArrayList<AttackHitbox> getAttackHitboxes() {
+        return this.attackHitboxes;
     }
 
     public InputDetector getInputDetector() {
