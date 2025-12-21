@@ -69,6 +69,10 @@ public class BattleRunner implements Runnable {
 
     private void update(double deltaTime) {
         //if panels ever move that would come before moving fighters so that collision could work :)
+        for (Fighter curFighter : fighters) {
+            curFighter.update(deltaTime); //I think need to be before so that short aren't counted down before they can even apply.
+        }
+       
         moveFighers(deltaTime);
         runEffects(deltaTime);
         attackCollision(deltaTime);
@@ -256,7 +260,7 @@ public class BattleRunner implements Runnable {
         }
     }
 
-    private void attackCollision(double deltaTime) { //not sure deltaTime is actually needed
+    private void attackCollision(double deltaTime) { //not sure deltaTime is actually needed, but I may use it later
         for (int i = 0; i < fighters.size(); i++) {
             Fighter curFighter = fighters.get(i);
             double xOffset = curFighter.getXPos();
@@ -288,6 +292,7 @@ public class BattleRunner implements Runnable {
                 curFighter.applyStun(mostStun);
                 //TODO: APPLY KNOCKBACK
             }
+        }
     }
 
     // RENDER METHOD \\

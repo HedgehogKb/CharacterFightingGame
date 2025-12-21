@@ -2,32 +2,42 @@ package com.hedgehogkb.fighter;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-import com.hedgehogkb.attack.Attack;
 import com.hedgehogkb.effects.Effect;
+import com.hedgehogkb.fighter.animation.AnimationFrame;
 import com.hedgehogkb.fighter.animation.AnimationHandler;
+import com.hedgehogkb.fighter.moves.Attack;
+import com.hedgehogkb.fighter.moves.Move;
 import com.hedgehogkb.hitboxes.AttackHitbox;
 import com.hedgehogkb.hitboxes.RectHitbox;
 import com.hedgehogkb.hitboxes.TubeHitbox;
 
 public class Fighter {
+    //Handlers (and adjacent)
     private final AnimationHandler animHandler;
     private final MoveHandler moveHandler;
     private final PositionHandler posHandler;
     private final InputDetector  inputDetector;
 
+    //Hitboxes and move information
     private RectHitbox enviromentHitbox;
     private ArrayList<TubeHitbox> hurtboxes;
     private ArrayList<AttackHitbox> attackHitboxes;
+    private Move curMove;
     private Attack attack;
+    private double groundedCountdown;
 
+    //damage and effect information
+    private int stocks;
     private double damage;
     private double stunCountdown;
-    private int stocks;
-    private boolean invincible;
-
+    private double invincibleCountdown;
     private final ArrayList<Effect> effects;    
+
+    //Visual information
+    private BufferedImage sprite;
 
 
     public Fighter(AnimationHandler animHandler, MoveHandler moveHandler, PositionHandler posHandler, int stocks) {
@@ -36,11 +46,57 @@ public class Fighter {
         this.posHandler = posHandler;
         this.inputDetector = new InputDetector();
 
+        this.groundedCountdown = 0;
+
         this.damage = 0;
         this.stocks = stocks;
-        this.invincible = false;
+        this.invincibleCountdown = 0;
+        this.stunCountdown = 0;
 
         effects = new ArrayList<>();
+    }
+
+    public void update(double deltaTime) {
+        if (groundedCountdown > 0) {
+            groundedCountdown -= deltaTime;
+        }
+        if (invincibleCountdown > 0) {
+            invincibleCountdown -= deltaTime;
+        }
+        if (stunCountdown > 0) {
+            stunCountdown -= deltaTime;
+        }
+
+        if (attack != null) {
+            attack.advanceTimer(deltaTime);
+        }
+
+        Move newMove = moveHandler.getCurMove();
+
+        if (newMove != curMove) { //TODO: getCurMove method needs to take some stuff in. like being stunned or grounded
+            curMove = moveHandler.getCurMove();
+            animHandler.setAnimation(curMove.getMoveType());
+
+            if (curMove instanceof Attack A) {
+                this.attack = A;
+            }
+        }
+        AnimationFrame curFrame = animHandler.getCurrentFrame(deltaTime);
+        updateAnimationInformation(curFrame);
+    }
+
+    private void updateAnimationInformation(AnimationFrame curFrame) {
+        this.hurtboxes = curFrame.hurtboxes; //TODO: consider changing this to getter and setter rather than public fields
+        this.attackHitboxes = curFrame.attackHitboxs;
+
+        if (curFrame.changeXVel) {
+            posHandler.setXVel(curFrame.xVel);
+        }
+        if (curFrame.changeYVel) {
+            posHandler.setYVel(curFrame.yVel);
+        }
+
+        this.sprite = curFrame.sprite;
     }
 
     public void moveX(double deltaTime) {
@@ -49,6 +105,10 @@ public class Fighter {
 
     public void moveY(double deltaTime) {
         posHandler.updateYPos(deltaTime);
+    }
+
+    public void setGrounded() {
+        groundedCountdown = 0.66; // maybe dont just use magic number but instead make this be a customizable property (maybe a passive)
     }
 
     public void addEffect(Effect effect) {
@@ -68,7 +128,7 @@ public class Fighter {
     }
 
     public void applyDamage(double damage) {
-        if (invincible) return;
+        if (invincibleCountdown > 0) return;
 
         this.damage += damage;
     }
@@ -109,9 +169,15 @@ public class Fighter {
     public double getXVel() {
         return posHandler.getXVel();
     }
+    public void setXVel(double xVel) {
+        posHandler.setXVel(xVel);
+    }
 
     public double getYVel() {
         return posHandler.getYVel();
+    }
+    public void setYVel(double yVel) {
+        posHandler.setYVel(yVel);
     }
 
     public RectHitbox getEnviromentHitbox() {

@@ -1,19 +1,21 @@
 package com.hedgehogkb.fighter.animation;
 
-import java.awt.Image;
-import java.util.List;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 import com.hedgehogkb.hitboxes.AttackHitbox;
 import com.hedgehogkb.hitboxes.TubeHitbox;
 
 
 public class AnimationFrame {
-    public Image sprite;
+    public BufferedImage sprite;
     public double duration;
-    public List<TubeHitbox> hurtboxes;
-    public List<AttackHitbox> attackHitboxs;
+    public ArrayList<TubeHitbox> hurtboxes;
+    public ArrayList<AttackHitbox> attackHitboxs;
     //public List<Projectile> projectiles;
 
-    public double xVelo;
-    public double yVelo;
+    public boolean changeXVel;
+    public double xVel;
+    public boolean changeYVel;
+    public double yVel;
 }

@@ -1,15 +1,22 @@
-package com.hedgehogkb.attack;
+package com.hedgehogkb.fighter.moves;
 
 import java.util.ArrayList;
 
 import com.hedgehogkb.fighter.Fighter;
 
-public class Attack {
-    private final double REHIT_DURAITON; //the amount of time before the attack can affect a fighter again.
+public class Attack extends Move{
+    /**
+     * The amount of time before the attack can affect a fighter again.
+     */
+    private final double REHIT_DURAITON; 
     
-    private ArrayList<FighterTimer> hitFighters;
+    /**
+     * An arrayList storing hit fighters
+     */
+    private ArrayList<FighterTimer> hitFighters; //TODO: change this to a hashmap where fighter is key and coundown is value
 
-    public Attack(double rehitDuration) {
+    public Attack(MoveType moveType, double duration, double rehitDuration) {
+        super(moveType, duration);
         REHIT_DURAITON = rehitDuration;
     }
 

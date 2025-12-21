@@ -4,8 +4,8 @@ import javax.swing.JFrame;
 
 import com.hedgehogkb.battle.BattlePanel;
 import com.hedgehogkb.fighter.animation.AnimationHandler;
+import com.hedgehogkb.fighter.moves.MoveHandler;
 import com.hedgehogkb.fighter.Fighter;
-import com.hedgehogkb.fighter.MoveHandler;
 import com.hedgehogkb.fighter.PositionHandler;
 import com.hedgehogkb.stage.Stage;
 
