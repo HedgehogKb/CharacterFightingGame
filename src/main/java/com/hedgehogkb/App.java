@@ -20,16 +20,16 @@ public class App
         Stage testStage = new Stage();
 
         AnimationHandler testAnimHandler = new AnimationHandler();
-        MoveHandler testMoveHandler = new MoveHandler();
+        //MoveHandler testMoveHandler = new MoveHandler();
         PositionHandler testPosHandler = new PositionHandler(0,0,0,0);
-        Fighter testFighter = new Fighter(testAnimHandler, testMoveHandler, testPosHandler,3);
+        //Fighter testFighter = new Fighter(testAnimHandler, testMoveHandler, testPosHandler,3);
 
-        BattlePanel panel = new BattlePanel(testStage, testFighter);
+        //BattlePanel panel = new BattlePanel(testStage, testFighter);
 
         JFrame frame = new JFrame();
         frame.setSize(800,600);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.add(panel.getPanel());
+       // frame.add(panel.getPanel());
         frame.setVisible(true);
     }
 }

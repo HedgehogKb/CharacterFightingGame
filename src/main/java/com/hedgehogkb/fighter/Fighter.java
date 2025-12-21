@@ -15,13 +15,19 @@ import com.hedgehogkb.fighter.moves.MoveType;
 import com.hedgehogkb.hitboxes.AttackHitbox;
 import com.hedgehogkb.hitboxes.RectHitbox;
 import com.hedgehogkb.hitboxes.TubeHitbox;
+import com.hedgehogkb.keybinds.InputType;
+import com.hedgehogkb.keybinds.KeybindSettings;
+import com.hedgehogkb.keybinds.KeybindSettings.Keybinds;
 
 public class Fighter {
+    private final double MAX_GROUNDED_TIME;
+
     //Handlers (and adjacent)
     private final AnimationHandler animHandler;
     private final MoveHandler moveHandler;
     private final PositionHandler posHandler;
     private final InputDetector  inputDetector;
+    private final Keybinds keybinds;
 
     //Hitboxes and move information
     private RectHitbox enviromentHitbox;
@@ -39,14 +45,19 @@ public class Fighter {
     private final ArrayList<Effect> effects;    
 
     //Visual information
+    private Direction fighterFacing;
     private BufferedImage sprite;
+    
 
 
-    public Fighter(AnimationHandler animHandler, MoveHandler moveHandler, PositionHandler posHandler, int stocks) {
+    public Fighter(KeybindSettings keySettings, AnimationHandler animHandler, MoveHandler moveHandler, PositionHandler posHandler, int stocks) {
+        this.MAX_GROUNDED_TIME = 0.066;
+
         this.animHandler = animHandler;
         this.moveHandler = moveHandler;
         this.posHandler = posHandler;
         this.inputDetector = new InputDetector();
+        this.keybinds = keySettings.getKeybinds(1);
 
         this.groundedCountdown = 0;
 
@@ -56,6 +67,8 @@ public class Fighter {
         this.stunCountdown = 0;
 
         effects = new ArrayList<>();
+
+        fighterFacing = Direction.RIGHT;
     }
 
     public void update(double deltaTime) {
@@ -110,7 +123,7 @@ public class Fighter {
     }
 
     public void setGrounded() {
-        groundedCountdown = 0.66; // maybe dont just use magic number but instead make this be a customizable property (maybe a passive)
+        groundedCountdown = MAX_GROUNDED_TIME;
     }
 
     public void addEffect(Effect effect) {
@@ -140,7 +153,14 @@ public class Fighter {
         stunCountdown = duration;
     }
 
-    public java.util.List<Effect> getEffects() {
+    public Direction getFighterDirection() {
+        if (curMove.getMoveType() == MoveType.TURNING) {
+            return (fighterFacing == Direction.RIGHT) ? Direction.LEFT : Direction.RIGHT;
+        }
+        return fighterFacing;
+    }
+
+    public ArrayList<Effect> getEffects() {
         return this.effects;
     }
 
@@ -203,18 +223,32 @@ public class Fighter {
     private class InputDetector implements KeyListener {
 
         @Override
-        public void keyTyped(KeyEvent e) {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
+        public void keyTyped(KeyEvent e) {}
 
         @Override
         public void keyPressed(KeyEvent e) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            int keyCode = e.getKeyCode();
+            InputType input = keybinds.getKeybind(keyCode);
+            if (input != null) {
+                moveHandler.setPressed(keybinds.getKeybind(keyCode));
+                boolean grounded = groundedCountdown >= MAX_GROUNDED_TIME; //ensures player is actually grounded and not in coyote time
+                boolean attacking = attack != null;
+
+                // Player can change direction if on ground and attacking.
+                if (input == InputType.FORWARD && grounded && !attacking) {
+                    fighterFacing = Direction.RIGHT;
+                } else if (input == InputType.BACKWARD && grounded && !attacking) {
+                    fighterFacing = Direction.LEFT;
+                }
+            }
         }
 
         @Override
         public void keyReleased(KeyEvent e) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            int keyCode = e.getKeyCode();
+            if (keybinds.getKeybind(keyCode) != null) {
+                moveHandler.setReleased(keybinds.getKeybind(keyCode));
+            }        
         }
     }
 }

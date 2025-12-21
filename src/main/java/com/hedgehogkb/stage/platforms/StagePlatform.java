@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import com.hedgehogkb.effects.Effect;
+import com.hedgehogkb.fighter.Direction;
 import com.hedgehogkb.fighter.Fighter;
 import com.hedgehogkb.hitboxes.RectHitbox;
 
@@ -26,7 +27,7 @@ public abstract class StagePlatform {
         boolean collision = false;
         RectHitbox oHitbox = o.getEnviromentHitbox();
         for (RectHitbox hitbox : hitboxes) {
-            if (hitbox.intersects(0, 0, oHitbox, oXOffset, oYOffset)) {
+            if (hitbox.intersects(0, 0, o.getFighterDirection(), oHitbox, oXOffset, oYOffset, Direction.RIGHT)) { //Direction doesn't actually matter here
                 collision = true;
                 if (results != null) {
                     results.add(hitbox);

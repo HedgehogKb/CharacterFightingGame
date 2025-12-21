@@ -6,6 +6,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import com.hedgehogkb.effects.Effect;
+import com.hedgehogkb.fighter.Direction;
 import com.hedgehogkb.fighter.Fighter;
 import com.hedgehogkb.hitboxes.AttackHitbox;
 import com.hedgehogkb.hitboxes.Hitbox;
@@ -265,6 +266,7 @@ public class BattleRunner implements Runnable {
             Fighter curFighter = fighters.get(i);
             double xOffset = curFighter.getXPos();
             double yOffset = curFighter.getYPos();
+            Direction direction = curFighter.getFighterDirection();
             //loop over all of the other fighters
             for (int v = 0; v < fighters.size(); i++) {
                 if (v == i) continue;
@@ -274,6 +276,7 @@ public class BattleRunner implements Runnable {
 
                 double oXOffset = oFighter.getXPos();
                 double oYOffset = oFighter.getYPos();
+                Direction oDirectionn = oFighter.getFighterDirection();
 
                 double mostDamage = 0;
                 double mostStun = 0;
@@ -281,7 +284,7 @@ public class BattleRunner implements Runnable {
                 //loop over all of the player's hurtboxes
                 for (TubeHitbox hurtBox : curFighter.getHurtboxes()) {
                     for (AttackHitbox attackHitbox : oFighter.getAttackHitboxes()) {
-                        if (hurtBox.intersects(xOffset, yOffset, attackHitbox, oXOffset, oYOffset)) {
+                        if (hurtBox.intersects(xOffset, yOffset, direction, attackHitbox, oXOffset, oYOffset, oDirectionn)) {
                             mostDamage = Math.max(mostDamage, attackHitbox.getDamage());
                             mostStun = Math.max(mostStun, attackHitbox.getStunDuration());
                             //Same for knockback stuff

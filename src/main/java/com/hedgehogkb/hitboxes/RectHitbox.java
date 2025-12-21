@@ -2,6 +2,8 @@ package com.hedgehogkb.hitboxes;
 
 import java.awt.geom.Point2D;
 
+import com.hedgehogkb.fighter.Direction;
+
 public class RectHitbox implements LocalHitbox<RectHitbox> {
     private Point2D baseCenter;
     private double width;
@@ -9,11 +11,11 @@ public class RectHitbox implements LocalHitbox<RectHitbox> {
 
     @Override
     public boolean intersects(RectHitbox o) {        
-       return intersects(0,0,o,0,0);
+       return intersects(0,0, Direction.RIGHT, o,0,0, Direction.RIGHT);
     }
 
     @Override
-    public boolean intersects(double xOffset, double yOffset, RectHitbox o, double oXOffset, double oYOffset) {
+    public boolean intersects(double xOffset, double yOffset, Direction direction, RectHitbox o, double oXOffset, double oYOffset, Direction oDirection) {
                // Calculate bounds for this rectangle (center base)
         double thisLeft = baseCenter.getX() - width / 2 + xOffset;
         double thisRight = baseCenter.getX() + width / 2 + xOffset;

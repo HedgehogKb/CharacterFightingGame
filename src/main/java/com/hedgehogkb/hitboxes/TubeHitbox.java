@@ -3,6 +3,8 @@ package com.hedgehogkb.hitboxes;
 import java.awt.Graphics;
 import java.awt.geom.Point2D;
 
+import com.hedgehogkb.fighter.Direction;
+
 public class TubeHitbox implements LocalHitbox<TubeHitbox>{
     private Point2D circle1;
     private Point2D circle2;
@@ -51,15 +53,18 @@ public class TubeHitbox implements LocalHitbox<TubeHitbox>{
 
     @Override
     public boolean intersects(TubeHitbox o) {
-        return intersects(0, 0, o, 0, 0);
+        return intersects(0, 0, Direction.RIGHT, o, 0, 0, Direction.RIGHT);
     }
 
-    public boolean intersects(double xOffset, double yOffset, TubeHitbox o, double oXOffset, double oYOffset) {
+    public boolean intersects(double xOffset, double yOffset, Direction direction, TubeHitbox o, double oXOffset, double oYOffset, Direction oDirection) {
+        int dirMultiplier = direction.getMultiplier();
+        int oDirMultiplier = oDirection.getMultiplier();
+
         //world space points
-        Point2D c1  = new Point2D.Double(circle1.getX() + xOffset,  circle1.getY() + yOffset);
-        Point2D c2  = new Point2D.Double(circle2.getX() + xOffset,  circle2.getY() + yOffset);
-        Point2D oc1 = new Point2D.Double(o.circle1.getX() + oXOffset, o.circle1.getY() + oYOffset);
-        Point2D oc2 = new Point2D.Double(o.circle2.getX() + oXOffset, o.circle2.getY() + oYOffset);
+        Point2D c1  = new Point2D.Double(circle1.getX()*dirMultiplier + xOffset,  circle1.getY()*dirMultiplier + yOffset);
+        Point2D c2  = new Point2D.Double(circle2.getX()*dirMultiplier + xOffset,  circle2.getY()*dirMultiplier + yOffset);
+        Point2D oc1 = new Point2D.Double(o.circle1.getX()*oDirMultiplier + oXOffset, o.circle1.getY()*oDirMultiplier + oYOffset);
+        Point2D oc2 = new Point2D.Double(o.circle2.getX()*oDirMultiplier + oXOffset, o.circle2.getY()*oDirMultiplier + oYOffset);
         
         //See if hitboxes are near enough to possibly intersect
         Point2D center = findCenterpoint(c1, c2);
