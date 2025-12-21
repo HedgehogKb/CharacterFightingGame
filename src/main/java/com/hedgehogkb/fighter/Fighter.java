@@ -10,6 +10,8 @@ import com.hedgehogkb.fighter.animation.AnimationFrame;
 import com.hedgehogkb.fighter.animation.AnimationHandler;
 import com.hedgehogkb.fighter.moves.Attack;
 import com.hedgehogkb.fighter.moves.Move;
+import com.hedgehogkb.fighter.moves.MoveHandler;
+import com.hedgehogkb.fighter.moves.MoveType;
 import com.hedgehogkb.hitboxes.AttackHitbox;
 import com.hedgehogkb.hitboxes.RectHitbox;
 import com.hedgehogkb.hitboxes.TubeHitbox;
