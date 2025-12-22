@@ -10,8 +10,6 @@ public class PositionHandler {
     private double xAcc;
     private double yAcc;
 
-    private double maxXVel;
-    private double maxYVel;
     private double defaultXAcc; //will be used to set the acceleration back to normal after moving
     private double defaultYAcc;
 
@@ -23,21 +21,20 @@ public class PositionHandler {
         this.xAcc = 0;
         this.yAcc = 0;
 
-        this.maxXVel = maxXVel;
-        this.maxYVel = maxYVel;
     }
 
-    public double getMaxXVel() {
-        return maxXVel;
-    }
 
-    public void setMaxXVel(double maxXVel) {
-        this.maxXVel = maxXVel;
-    }
-
-    public void updateXPos(double deltaTime) {
+    public void updateXPos(double deltaTime, double maxXVel, double deceleration, Direction fighterDirection) {
+        int dirMultiplier = fighterDirection.getMultiplier();
+        //update acceleration
+        
+       
         // Update velocities based on acceleration
-        xVel += xAcc * deltaTime;
+        if (deceleration > 0) {
+            xVel += deceleration * dirMultiplier * deltaTime;
+        } else {
+            xVel += xAcc * deltaTime;
+        }
 
         // Clamp velocities to max values
         if (xVel > maxXVel) xVel = maxXVel;
@@ -47,10 +44,11 @@ public class PositionHandler {
         xPos += xVel * deltaTime;
     }
 
-    public void updateYPos(double deltaTime) {
+    public void updateYPos(double deltaTime, double maxYVel) {
         yVel += yAcc * deltaTime;
         
-        if (yVel > maxYVel) yVel = maxYVel;
+        //The player can move downard (on the screen that's positive y vel) as fast as they want. I may not even need/want maxYVel.
+        //if (yVel > maxYVel) yVel = maxYVel; 
         if (yVel < -maxYVel) yVel = -maxYVel;
         
         yPos += yVel * deltaTime;

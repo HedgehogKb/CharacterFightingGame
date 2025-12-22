@@ -20,18 +20,57 @@ import com.hedgehogkb.keybinds.KeybindSettings;
 import com.hedgehogkb.keybinds.KeybindSettings.Keybinds;
 
 public class Fighter {
-    private final double MAX_GROUNDED_TIME;
-    private final int MAX_JUMPS;
+
+    /*
+     * These are basically final, but due to effects I'm leaving them
+     * as not final
+     */
 
     /**
-     * How much xAcc decreases each frame of a standing animation
+     * How long coyotee times lasts.
      */
-    private final double STANDING_DECEL = 0.1;
+    private  double max_grounded_time;
 
     /**
-     * How much xAcc decreases each frame of directionless airtime
+     * The maximum number of jumps can can be completed before touching on the ground again.
+     * This includes the ground jump, so a value of 1 would be no air jumps.
      */
-    private final double AIR_DECEL = 0.05;
+    private  int max_jumps;
+
+    /**
+     * How much xAcc decreases each second of a standing animation
+     */
+    private double standing_decel;
+
+    /**
+     * How much xAcc decreases each second of directionless airtime
+     */
+    private double air_decel;
+
+    /**
+     * How much velocity changes after one second of walking
+     */
+    private double walking_acc;
+
+    /**
+     * The highest value of velocity when walking.
+     */
+    private double max_walking_vel;
+
+    /**
+     * How much velocity changes after one second of sprinting.
+     */
+    private double sprinting_acc;
+
+    /**
+     * The highest value of velocity when sprinting.
+     */
+    private double max_sprinting_vel;
+
+    /**
+     * the quickest that the character can move vertically upward
+     */
+    private double max_y_vel;
 
     //Handlers (and adjacent)
     private final AnimationHandler animHandler;
@@ -64,8 +103,8 @@ public class Fighter {
 
 
     public Fighter(KeybindSettings keySettings, AnimationHandler animHandler, MoveHandler moveHandler, PositionHandler posHandler, int stocks) {
-        this.MAX_GROUNDED_TIME = 0.066;
-        this.MAX_JUMPS = 2;
+        this.max_grounded_time = 0.066;
+        this.max_jumps = 2;
 
         this.animHandler = animHandler;
         this.moveHandler = moveHandler;
@@ -100,7 +139,7 @@ public class Fighter {
             attack.advanceTimer(deltaTime);
         }
 
-        Move newMove = moveHandler.getCurMove(deltaTime, groundedCountdown, MAX_GROUNDED_TIME, jumps, MAX_JUMPS, stunCountdown);
+        Move newMove = moveHandler.getCurMove(deltaTime, groundedCountdown, max_grounded_time, jumps, max_jumps, stunCountdown);
 
         if (newMove != curMove) { //TODO: getCurMove method needs to take some stuff in. like being stunned or grounded
             curMove = newMove;
@@ -133,15 +172,25 @@ public class Fighter {
     }
 
     public void moveX(double deltaTime) {
-        posHandler.updateXPos(deltaTime);
+        double deceleration = 0;
+        if (groundedCountdown < max_grounded_time) {
+            deceleration = air_decel;
+        } else if (curMove.getMoveType() == MoveType.STANDING) {
+            deceleration = standing_decel;
+        }
+
+        double maxXVelo = max_sprinting_vel;
+        if (curMove.getMoveType() == MoveType.WALKING) maxXVelo = max_walking_vel;
+
+        posHandler.updateXPos(deltaTime, maxXVelo, deceleration, fighterFacing);
     }
 
     public void moveY(double deltaTime) {
-        posHandler.updateYPos(deltaTime);
+        posHandler.updateYPos(deltaTime, max_y_vel);
     }
 
     public void setGrounded() {
-        groundedCountdown = MAX_GROUNDED_TIME;
+        groundedCountdown = max_grounded_time;
         jumps = 0;
     }
 
@@ -181,14 +230,6 @@ public class Fighter {
 
     public ArrayList<Effect> getEffects() {
         return this.effects;
-    }
-
-    public double getMaxXVel() {
-        return this.posHandler.getMaxXVel();
-    }
-
-    public void setMaxXVel(double maxXVel) {
-        this.posHandler.setMaxXVel(maxXVel);
     }
 
     //Getters and setters
@@ -250,7 +291,7 @@ public class Fighter {
             InputType input = keybinds.getKeybind(keyCode);
             if (input != null) {
                 moveHandler.setPressed(keybinds.getKeybind(keyCode));
-                boolean grounded = groundedCountdown >= MAX_GROUNDED_TIME; //ensures player is actually grounded and not in coyote time
+                boolean grounded = groundedCountdown >= max_grounded_time; //ensures player is actually grounded and not in coyote time
                 boolean attacking = attack != null;
 
                 // Player can change direction if on ground and attacking.

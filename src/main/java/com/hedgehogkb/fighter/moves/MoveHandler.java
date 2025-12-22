@@ -11,6 +11,9 @@ public class MoveHandler {
     private final HashMap<MoveType, Move> moves;
     private final HashMap<InputType, Boolean> holding;
 
+    private boolean normalReset;
+    private boolean specialReset;
+
     public MoveHandler(HashMap<MoveType, Move> moves) {
         curMove = moves.get(MoveType.STANDING);
         this.moves = moves;
@@ -18,6 +21,9 @@ public class MoveHandler {
         for (InputType inputType : InputType.values()) {
             holding.put(inputType, false);
         }
+
+        this.normalReset = true;
+        this.specialReset = true;
     }
 
     public Move getCurMove(double deltaTime, double groundedCooldown, double maxGroundedCooldown, int jumps, int maxJumps, double stunCooldown) {
@@ -62,7 +68,7 @@ public class MoveHandler {
         boolean canJump = jumps <= maxJumps;
 
         if (curMove.getMoveType() == MoveType.JUMPING) {
-            if (curMove.getDuration() <= moveTimer) {
+            if (moveTimer <= curMove.getDuration()) {
                 return curMove;
             }
         }
@@ -77,7 +83,9 @@ public class MoveHandler {
     }
 
     private MoveType resolveAttack(boolean inAir) {
-        if (holding.get(InputType.NORMAL)) {
+        if (holding.get(InputType.NORMAL) && normalReset) {
+            normalReset = false;
+            
             if (inAir) {
                 if (holding.get(InputType.FORWARD)) return MoveType.FAIR_ATTACK;
                 if (holding.get(InputType.BACKWARD)) return MoveType.NAIR_ATTACK; // optional
@@ -94,7 +102,9 @@ public class MoveHandler {
             }
         }
 
-        if (holding.get(InputType.SPECIAL)) {
+        if (holding.get(InputType.SPECIAL) && specialReset) {
+            specialReset = false;
+
             if (holding.get(InputType.FORWARD)) return MoveType.FORWARD_SPECIAL;
             if (holding.get(InputType.UP)) return MoveType.UP_SPECIAL;
             if (holding.get(InputType.DOWN)) return MoveType.DOWN_SPECIAL;
@@ -115,5 +125,10 @@ public class MoveHandler {
 
     public void setReleased(InputType inputType) {
         holding.put(inputType, false);
+        if (inputType == InputType.NORMAL) {
+            normalReset = true;
+        } else if (inputType == InputType.SPECIAL) {
+            specialReset = true;
+        }
     }
 }

@@ -27,6 +27,11 @@ public class InputTest {
             moves.put(moveType, new Move(moveType, 5));
         }
         moves.put(MoveType.NORMAL_ATTACK, new Attack(MoveType.NORMAL_ATTACK, 5, 5));
+        moves.put(MoveType.FORWARD_ATTACK, new Attack(MoveType.FORWARD_ATTACK, 5, 5));
+        moves.put(MoveType.DOWN_ATTACK, new Attack(MoveType.DOWN_ATTACK, 5, 5));
+        moves.put(MoveType.UP_ATTACK, new Attack(MoveType.UP_ATTACK, 5, 5));
+        moves.put(MoveType.NAIR_ATTACK, new Attack(MoveType.NAIR_ATTACK, 5, 5));
+        moves.put(MoveType.FORWARD_ATTACK, new Attack(MoveType.FORWARD_ATTACK, 5, 5));
         MoveHandler moveHandler = new MoveHandler(moves);
         PositionHandler positionHandler = new PositionHandler(0,0,256,256);
 
