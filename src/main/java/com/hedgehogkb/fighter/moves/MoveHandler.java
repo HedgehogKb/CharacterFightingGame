@@ -6,10 +6,13 @@ import com.hedgehogkb.keybinds.InputType;
 
 
 public class MoveHandler {
+    private Move curMove;
+    private double moveTimer;
     private final HashMap<MoveType, Move> moves;
     private final HashMap<InputType, Boolean> holding;
 
     public MoveHandler(HashMap<MoveType, Move> moves) {
+        curMove = moves.get(MoveType.STANDING);
         this.moves = moves;
         holding = new HashMap<>();
         for (InputType inputType : InputType.values()) {
@@ -17,8 +20,74 @@ public class MoveHandler {
         }
     }
 
-    public Move getCurMove() {
+    public Move getCurMove(double deltaTime, int groundedCooldown, int maxGroundedCooldown, int jumps, int maxJumps, int stunCooldown) {
+        if (stunCooldown > 0) {
+            return moves.get(MoveType.STUNNED);
+        }
+        moveTimer += deltaTime; //may need to move this to end...
+
+        // If already attacking then return the current move
+        if (currentlyAttacking()) {
+            if (curMove.getDuration() <= moveTimer) {
+                return curMove;
+            }
+        }
+
+        boolean inAir = groundedCooldown < maxGroundedCooldown;
+
+        MoveType newAttack = resolveAttack(inAir);
+        if (newAttack != null) return moves.get(newAttack);
+
+        if (holding.get(InputType.FORWARD) && !holding.get(InputType.BACKWARD) ||
+            holding.get(InputType.BACKWARD) && !holding.get(InputType.FORWARD)) {
+            if (!inAir) {
+                if (holding.get(InputType.SPRINT)) return moves.get(MoveType.SPRINTING);
+                return moves.get(MoveType.WALKING);
+            }
+        }
+
+        if (curMove.getMoveType() == MoveType.JUMPING) {
+            if (curMove.getDuration() <= moveTimer) {
+                return curMove;
+            }
+        }
+
+        if (inAir) return moves.get(MoveType.FLOATING);
+
         return moves.get(MoveType.STANDING);
+    }
+
+    private MoveType resolveAttack(boolean inAir) {
+        if (holding.get(InputType.NORMAL)) {
+            if (inAir) {
+                if (holding.get(InputType.FORWARD)) return MoveType.FAIR_ATTACK;
+                if (holding.get(InputType.BACKWARD)) return MoveType.NAIR_ATTACK; // optional
+                if (holding.get(InputType.UP)) return MoveType.UAIR_ATTACK;
+                if (holding.get(InputType.DOWN)) return MoveType.DAIR_ATTACK;
+
+                return MoveType.NAIR_ATTACK;
+            } else {
+                if (holding.get(InputType.FORWARD)) return MoveType.FORWARD_ATTACK;
+                if (holding.get(InputType.UP)) return MoveType.UP_ATTACK;
+                if (holding.get(InputType.DOWN)) return MoveType.DOWN_ATTACK;
+
+                return MoveType.NORMAL_ATTACK;
+            }
+        }
+
+        if (holding.get(InputType.SPECIAL)) {
+            if (holding.get(InputType.FORWARD)) return MoveType.FORWARD_SPECIAL;
+            if (holding.get(InputType.UP)) return MoveType.UP_SPECIAL;
+            if (holding.get(InputType.DOWN)) return MoveType.DOWN_SPECIAL;
+
+            return MoveType.NORMAL_SPECIAL;
+        }
+
+        return null;
+    }
+
+    public boolean currentlyAttacking() {
+        return curMove instanceof Attack;
     }
 
     public void setPressed(InputType inputType) {

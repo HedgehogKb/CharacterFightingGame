@@ -22,6 +22,16 @@ import com.hedgehogkb.keybinds.KeybindSettings.Keybinds;
 public class Fighter {
     private final double MAX_GROUNDED_TIME;
 
+    /**
+     * How much xAcc decreases each frame of a standing animation
+     */
+    private final double STANDING_DECEL;
+
+    /**
+     * How much xAcc decreases each frame of directionless airtime
+     */
+    private final double AIR_DECEL;
+
     //Handlers (and adjacent)
     private final AnimationHandler animHandler;
     private final MoveHandler moveHandler;
@@ -89,7 +99,7 @@ public class Fighter {
         Move newMove = moveHandler.getCurMove();
 
         if (newMove != curMove) { //TODO: getCurMove method needs to take some stuff in. like being stunned or grounded
-            curMove = moveHandler.getCurMove();
+            curMove = newMove;
             animHandler.setAnimation(curMove.getMoveType());
 
             if (curMove instanceof Attack A) {
@@ -154,9 +164,9 @@ public class Fighter {
     }
 
     public Direction getFighterDirection() {
-        if (curMove.getMoveType() == MoveType.TURNING) {
+        /* if (curMove.getMoveType() == MoveType.TURNING) {
             return (fighterFacing == Direction.RIGHT) ? Direction.LEFT : Direction.RIGHT;
-        }
+        } */
         return fighterFacing;
     }
 

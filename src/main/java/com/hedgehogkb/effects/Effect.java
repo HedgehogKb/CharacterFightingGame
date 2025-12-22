@@ -3,7 +3,7 @@ package com.hedgehogkb.effects;
 import com.hedgehogkb.fighter.Fighter;
 
 public abstract class Effect {
-    private final Fighter fighter;
+    protected final Fighter fighter;
     private final double DURATION; //in seconds
     private double elapsedTime;
     private boolean initialized = false;
