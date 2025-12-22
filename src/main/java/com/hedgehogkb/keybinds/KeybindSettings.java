@@ -8,6 +8,7 @@ public class KeybindSettings {
         private HashMap<Integer, InputType> keybinds;
 
         private Keybinds(int player) {
+            keybinds = new HashMap<>();
             switch (player) {
                 case 1:
                     keybinds.put(KeyEvent.VK_A, InputType.BACKWARD);

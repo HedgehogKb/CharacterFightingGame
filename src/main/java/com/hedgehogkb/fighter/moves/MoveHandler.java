@@ -20,17 +20,30 @@ public class MoveHandler {
         }
     }
 
-    public Move getCurMove(double deltaTime, int groundedCooldown, int maxGroundedCooldown, int jumps, int maxJumps, int stunCooldown) {
+    public Move getCurMove(double deltaTime, double groundedCooldown, double maxGroundedCooldown, int jumps, int maxJumps, double stunCooldown) {
+        Move newMove = resolveCurMove(deltaTime, groundedCooldown, maxGroundedCooldown, jumps, maxJumps, stunCooldown);
+        if (curMove != newMove) {
+            //System.out.println(moveTimer);
+            moveTimer = 0;
+        }
+        curMove = newMove;
+
+         //these actually aren't held, so it makes sure you need to click it again to use them.
+        holding.put(InputType.NORMAL, false);
+        holding.put(InputType.SPECIAL, false);
+        return curMove;
+    }
+
+    public Move resolveCurMove(double deltaTime, double groundedCooldown, double maxGroundedCooldown, int jumps, int maxJumps, double stunCooldown) {
         if (stunCooldown > 0) {
             return moves.get(MoveType.STUNNED);
         }
         moveTimer += deltaTime; //may need to move this to end...
 
         // If already attacking then return the current move
-        if (currentlyAttacking()) {
-            if (curMove.getDuration() <= moveTimer) {
-                return curMove;
-            }
+        if (currentlyAttacking() && moveTimer <= curMove.getDuration()) {
+            //System.out.println("attacking again: " + moveTimer);
+            return curMove;
         }
 
         boolean inAir = groundedCooldown < maxGroundedCooldown;
@@ -46,13 +59,19 @@ public class MoveHandler {
             }
         }
 
+        boolean canJump = jumps <= maxJumps;
+
         if (curMove.getMoveType() == MoveType.JUMPING) {
             if (curMove.getDuration() <= moveTimer) {
                 return curMove;
             }
         }
 
-        if (inAir) return moves.get(MoveType.FLOATING);
+        if (canJump && holding.get(InputType.UP)) {
+            return moves.get(MoveType.JUMPING);
+        }
+
+        if (inAir) return moves.get(MoveType.FALLING);
 
         return moves.get(MoveType.STANDING);
     }

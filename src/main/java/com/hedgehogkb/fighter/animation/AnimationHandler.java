@@ -2,17 +2,17 @@ package com.hedgehogkb.fighter.animation;
 
 import java.util.HashMap;
 
-import com.hedgehogkb.fighter.MoveType;
+import com.hedgehogkb.fighter.moves.MoveType;
 
 public class AnimationHandler {
-    HashMap<MoveType, Animation> animations;
-    Animation curAnimation;
+    private HashMap<MoveType, Animation> animations;
+    private SingleAnimation curAnimation;
 
     public AnimationHandler() {
     }
 
     public void setAnimation(MoveType moveType) { //origionally called getAnimationMethod2 if you want to be funny
-        Animation animation = animations.get(moveType);
+        SingleAnimation animation = (SingleAnimation) animations.get(moveType);
         if (animation == null) {
             throw new IllegalArgumentException("No animation found for move type: " + moveType);
         }

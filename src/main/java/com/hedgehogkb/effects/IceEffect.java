@@ -1,4 +1,5 @@
 import com.hedgehogkb.fighter.Fighter;
+import com.hedgehogkb.keybinds.fighterKeybinds;
 
 public class IceEffect extends Effect {
     public IceEffect(Fighter fighter) {
@@ -9,7 +10,9 @@ public class IceEffect extends Effect {
     public void initialEffect() {} //do nothing
 
     @Override
-    public void updateEffect(double deltaTime) {}
+    public void updateEffect(double deltaTime) {
+        double figherAcc = fighter.getXAcc();
+    }
 
     @Override
     public void removeEffect() {

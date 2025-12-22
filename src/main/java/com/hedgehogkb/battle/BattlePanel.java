@@ -1,5 +1,6 @@
 package com.hedgehogkb.battle;
 
+import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ public class BattlePanel {
     private int FRAMES_PER_SECOND = 30;
 
     private JPanel panel;
+    private Canvas canvas;
 
     private List<Fighter> fighters;
     private Stage stage;

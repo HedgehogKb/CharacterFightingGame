@@ -1,5 +1,5 @@
 package com.hedgehogkb.keybinds;
 
 public enum InputType {
-    NORMAL, SPECIAL, FORWARD, BACKWARD, UP, DOWN, SPRINT
+    NORMAL, SPECIAL, FORWARD, BACKWARD, UP, DOWN, SPRINT, SHIELD, GRAP, SUPER
 }

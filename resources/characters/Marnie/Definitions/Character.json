@@ -1,0 +1,17 @@
+{
+    "name": "Marnie",
+    "type": "character",
+    "stats": {
+        "weight": 5,
+        "walk speed": 128,
+        "ground deceleration": 256,
+        "air deceleration": 128
+    },
+    "passive": ["awareness"],
+    "moves": {
+        "standing" : {
+            "frames"
+        }
+    }
+
+}

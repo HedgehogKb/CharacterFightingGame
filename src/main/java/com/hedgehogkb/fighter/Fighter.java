@@ -21,16 +21,17 @@ import com.hedgehogkb.keybinds.KeybindSettings.Keybinds;
 
 public class Fighter {
     private final double MAX_GROUNDED_TIME;
+    private final int MAX_JUMPS;
 
     /**
      * How much xAcc decreases each frame of a standing animation
      */
-    private final double STANDING_DECEL;
+    private final double STANDING_DECEL = 0.1;
 
     /**
      * How much xAcc decreases each frame of directionless airtime
      */
-    private final double AIR_DECEL;
+    private final double AIR_DECEL = 0.05;
 
     //Handlers (and adjacent)
     private final AnimationHandler animHandler;
@@ -46,6 +47,8 @@ public class Fighter {
     private Move curMove;
     private Attack attack;
     private double groundedCountdown;
+    private int jumps;
+
 
     //damage and effect information
     private int stocks;
@@ -62,6 +65,7 @@ public class Fighter {
 
     public Fighter(KeybindSettings keySettings, AnimationHandler animHandler, MoveHandler moveHandler, PositionHandler posHandler, int stocks) {
         this.MAX_GROUNDED_TIME = 0.066;
+        this.MAX_JUMPS = 2;
 
         this.animHandler = animHandler;
         this.moveHandler = moveHandler;
@@ -96,7 +100,7 @@ public class Fighter {
             attack.advanceTimer(deltaTime);
         }
 
-        Move newMove = moveHandler.getCurMove();
+        Move newMove = moveHandler.getCurMove(deltaTime, groundedCountdown, MAX_GROUNDED_TIME, jumps, MAX_JUMPS, stunCountdown);
 
         if (newMove != curMove) { //TODO: getCurMove method needs to take some stuff in. like being stunned or grounded
             curMove = newMove;
@@ -104,6 +108,10 @@ public class Fighter {
 
             if (curMove instanceof Attack A) {
                 this.attack = A;
+            }
+
+            if (curMove.getMoveType() == MoveType.JUMPING) {
+                jumps++;
             }
         }
         AnimationFrame curFrame = animHandler.getCurrentFrame(deltaTime);
@@ -134,6 +142,7 @@ public class Fighter {
 
     public void setGrounded() {
         groundedCountdown = MAX_GROUNDED_TIME;
+        jumps = 0;
     }
 
     public void addEffect(Effect effect) {
