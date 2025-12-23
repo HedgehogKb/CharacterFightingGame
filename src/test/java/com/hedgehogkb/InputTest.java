@@ -14,6 +14,8 @@ import com.hedgehogkb.fighter.moves.Attack;
 import com.hedgehogkb.fighter.moves.Move;
 import com.hedgehogkb.fighter.moves.MoveHandler;
 import com.hedgehogkb.fighter.moves.MoveType;
+import com.hedgehogkb.fighter.moves.SingleAttack;
+import com.hedgehogkb.fighter.moves.SingleMove;
 import com.hedgehogkb.keybinds.KeybindSettings;
 
 public class InputTest {
@@ -24,14 +26,14 @@ public class InputTest {
         HashMap<MoveType, Move> moves = new HashMap<>();
 
         for (MoveType moveType : MoveType.values()) {
-            moves.put(moveType, new Move(moveType, 5));
+            moves.put(moveType, new SingleMove(moveType, 5));
         }
-        moves.put(MoveType.NORMAL_ATTACK, new Attack(MoveType.NORMAL_ATTACK, 5, 5));
-        moves.put(MoveType.FORWARD_ATTACK, new Attack(MoveType.FORWARD_ATTACK, 5, 5));
-        moves.put(MoveType.DOWN_ATTACK, new Attack(MoveType.DOWN_ATTACK, 5, 5));
-        moves.put(MoveType.UP_ATTACK, new Attack(MoveType.UP_ATTACK, 5, 5));
-        moves.put(MoveType.NAIR_ATTACK, new Attack(MoveType.NAIR_ATTACK, 5, 5));
-        moves.put(MoveType.FORWARD_ATTACK, new Attack(MoveType.FORWARD_ATTACK, 5, 5));
+        moves.put(MoveType.NORMAL_ATTACK, new SingleAttack(MoveType.NORMAL_ATTACK, 1, 5));
+        moves.put(MoveType.FORWARD_ATTACK, new SingleAttack(MoveType.FORWARD_ATTACK, 2, 5));
+        moves.put(MoveType.DOWN_ATTACK, new SingleAttack(MoveType.DOWN_ATTACK, 3, 5));
+        moves.put(MoveType.UP_ATTACK, new SingleAttack(MoveType.UP_ATTACK, 4, 5));
+        moves.put(MoveType.NAIR_ATTACK, new SingleAttack(MoveType.NAIR_ATTACK, 1, 5));
+        moves.put(MoveType.FORWARD_ATTACK, new SingleAttack(MoveType.FORWARD_ATTACK, 5, 5));
         MoveHandler moveHandler = new MoveHandler(moves);
         PositionHandler positionHandler = new PositionHandler(0,0,256,256);
 

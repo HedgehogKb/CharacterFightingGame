@@ -1,3 +1,5 @@
+package com.hedgehogkb.effects;
+
 import com.hedgehogkb.fighter.Fighter;
 import com.hedgehogkb.keybinds.fighterKeybinds;
 

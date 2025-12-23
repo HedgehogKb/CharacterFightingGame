@@ -1,26 +1,14 @@
 package com.hedgehogkb.fighter.moves;
 
-public class Move {
+public interface Move {
     /**
-     * The type of move i.e.
+     * Signals to the 
+     * @return
      */
-    private final MoveType MOVE_TYPE;
+    public void startMove();
 
-    /**
-     * The length that the move lasts before the player can get out of it.
-     */
-    private final double DURATION;
 
-    public Move(MoveType moveType, double duration) {
-        this.MOVE_TYPE = moveType;
-        this.DURATION = duration;
-    }
+    public double getDuration();
 
-    public MoveType getMoveType() {
-        return this.MOVE_TYPE;
-    }
-
-    public double getDuration() {
-        return this.DURATION;
-    }
+    public MoveType getMoveType();
 }

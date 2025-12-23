@@ -136,7 +136,7 @@ public class Fighter {
         }
 
         if (attack != null) {
-            attack.advanceTimer(deltaTime);
+            attack.advanceTimers(deltaTime);
         }
 
         Move newMove = moveHandler.getCurMove(deltaTime, groundedCountdown, max_grounded_time, jumps, max_jumps, stunCountdown);
@@ -158,14 +158,15 @@ public class Fighter {
     }
 
     private void updateAnimationInformation(AnimationFrame curFrame) {
+        int dirMultiplier = fighterFacing.getMultiplier();
         this.hurtboxes = curFrame.hurtboxes; //TODO: consider changing this to getter and setter rather than public fields
         this.attackHitboxes = curFrame.attackHitboxs;
 
         if (curFrame.changeXVel) {
-            posHandler.setXVel(curFrame.xVel);
+            posHandler.setXVel(curFrame.xVel * dirMultiplier);
         }
         if (curFrame.changeYVel) {
-            posHandler.setYVel(curFrame.yVel);
+            posHandler.setYVel(curFrame.yVel * dirMultiplier);
         }
 
         this.sprite = curFrame.sprite;
@@ -221,16 +222,7 @@ public class Fighter {
         stunCountdown = duration;
     }
 
-    public Direction getFighterDirection() {
-        /* if (curMove.getMoveType() == MoveType.TURNING) {
-            return (fighterFacing == Direction.RIGHT) ? Direction.LEFT : Direction.RIGHT;
-        } */
-        return fighterFacing;
-    }
 
-    public ArrayList<Effect> getEffects() {
-        return this.effects;
-    }
 
     //Getters and setters
 
@@ -276,6 +268,40 @@ public class Fighter {
 
     public InputDetector getInputDetector() {
         return this.inputDetector;
+    }
+
+    public Direction getFighterDirection() {
+        /* if (curMove.getMoveType() == MoveType.TURNING) {
+            return (fighterFacing == Direction.RIGHT) ? Direction.LEFT : Direction.RIGHT;
+        } */
+        return fighterFacing;
+    }
+
+    public ArrayList<Effect> getEffects() {
+        return this.effects;
+    }
+
+    //Player Stats Getters and Setters
+
+    public double getWalkingAcc() {
+        return this.walking_acc;
+    }
+    public void setWalkingAcc(double walkingAcc) {
+        this.walking_acc = walkingAcc;
+    }
+
+    public double getSprintingAcc() {
+        return this.sprinting_acc;
+    }
+    public void setSprintingAcc(double sprintingAcc) {
+        this.sprinting_acc = sprintingAcc;
+    }
+
+    public double getStandingDecel() {
+        return this.standing_decel;
+    }
+    public void setStandingDecel(double standingDecel) {
+        this.standing_decel = standingDecel;
     }
 
     // PRIVATE CLASSES

@@ -1,0 +1,61 @@
+package com.hedgehogkb.fighter.moves;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import com.hedgehogkb.fighter.Fighter;
+
+public class MultiAttack implements Attack {
+    public MoveType moveType;
+    private ArrayList<Double> durations;
+    private int curDurationIndex;
+
+    private final ArrayList<Double> REHIT_DURATIONS;
+    private HashMap<Fighter, Double> hitfighters;
+
+    public MultiAttack(MoveType moveType, ArrayList<Double> durations, ArrayList<Double> rehitDuration) {
+        this.moveType = moveType;
+        this.durations = durations;
+        this.curDurationIndex = -1;
+
+        this.REHIT_DURATIONS = rehitDuration;
+        hitfighters = new HashMap<>();
+    }
+
+    @Override
+    public void startMove() {
+        curDurationIndex++;
+        if (curDurationIndex > durations.size()) curDurationIndex = 0;
+
+        hitfighters.clear();
+    }
+
+    @Override
+    public void markFighter(Fighter fighter) {
+        hitfighters.put(fighter, getDuration());
+    }
+
+    @Override
+    public void advanceTimers(double deltaTime) {
+        for (Fighter key : hitfighters.keySet()) {
+            double duration = hitfighters.get(key) - deltaTime;
+            hitfighters.put(key, duration);
+            if (duration <= 0) hitfighters.remove(key);
+        }
+    }
+
+    @Override
+    public boolean isMarked(Fighter fighter) {
+        return hitfighters.containsKey(fighter);
+    }
+
+    @Override
+    public double getDuration() {
+        return durations.get(curDurationIndex);
+    }
+
+    @Override
+    public MoveType getMoveType() {
+        return this.moveType;
+    }
+}

@@ -29,7 +29,7 @@ public class MoveHandler {
     public Move getCurMove(double deltaTime, double groundedCooldown, double maxGroundedCooldown, int jumps, int maxJumps, double stunCooldown) {
         Move newMove = resolveCurMove(deltaTime, groundedCooldown, maxGroundedCooldown, jumps, maxJumps, stunCooldown);
         if (curMove != newMove) {
-            //System.out.println(moveTimer);
+            newMove.startMove();
             moveTimer = 0;
         }
         curMove = newMove;
@@ -105,7 +105,8 @@ public class MoveHandler {
         if (holding.get(InputType.SPECIAL) && specialReset) {
             specialReset = false;
 
-            if (holding.get(InputType.FORWARD)) return MoveType.FORWARD_SPECIAL;
+            if (holding.get(InputType.FORWARD) ||
+                holding.get(InputType.BACKWARD)) return MoveType.FORWARD_SPECIAL;
             if (holding.get(InputType.UP)) return MoveType.UP_SPECIAL;
             if (holding.get(InputType.DOWN)) return MoveType.DOWN_SPECIAL;
 
