@@ -7,13 +7,13 @@ import com.hedgehogkb.fighter.Fighter;
 
 public class MultiAttack implements Attack {
     public MoveType moveType;
-    private ArrayList<Double> durations;
+    private double[] durations;
     private int curDurationIndex;
 
-    private final ArrayList<Double> REHIT_DURATIONS;
+    private final double[] REHIT_DURATIONS;
     private HashMap<Fighter, Double> hitfighters;
 
-    public MultiAttack(MoveType moveType, ArrayList<Double> durations, ArrayList<Double> rehitDuration) {
+    public MultiAttack(MoveType moveType, double[] durations, double[] rehitDuration) {
         this.moveType = moveType;
         this.durations = durations;
         this.curDurationIndex = -1;
@@ -25,7 +25,7 @@ public class MultiAttack implements Attack {
     @Override
     public void startMove() {
         curDurationIndex++;
-        if (curDurationIndex > durations.size()) curDurationIndex = 0;
+        if (curDurationIndex > durations.length) curDurationIndex = 0;
 
         hitfighters.clear();
     }
@@ -51,7 +51,7 @@ public class MultiAttack implements Attack {
 
     @Override
     public double getDuration() {
-        return durations.get(curDurationIndex);
+        return durations[curDurationIndex];
     }
 
     @Override

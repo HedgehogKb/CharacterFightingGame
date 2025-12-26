@@ -22,8 +22,11 @@ public class MoveHandler {
             holding.put(inputType, false);
         }
 
+
+        
         this.normalReset = true;
         this.specialReset = true;
+        
     }
 
     public Move getCurMove(double deltaTime, double groundedCooldown, double maxGroundedCooldown, int jumps, int maxJumps, double stunCooldown) {
@@ -34,9 +37,22 @@ public class MoveHandler {
         }
         curMove = newMove;
 
+        if (curMove instanceof Attack a) {
+            a.advanceTimers(deltaTime);
+        }
+
+        if (charging()) {
+            boolean attackButtonDown = holding.get(attackButton(curMove.getMoveType()));
+            if (!attackButtonDown) {
+                ((ChargeAttack) curMove).endCharge();
+            }
+            moveTimer = 0;
+        } else {
+            holding.put(InputType.NORMAL, false);
+            holding.put(InputType.SPECIAL, false);
+        }
          //these actually aren't held, so it makes sure you need to click it again to use them.
-        holding.put(InputType.NORMAL, false);
-        holding.put(InputType.SPECIAL, false);
+        
         return curMove;
     }
 
@@ -47,7 +63,7 @@ public class MoveHandler {
         moveTimer += deltaTime; //may need to move this to end...
 
         // If already attacking then return the current move
-        if (currentlyAttacking() && moveTimer <= curMove.getDuration()) {
+        if ((currentlyAttacking() && moveTimer <= curMove.getDuration()) || charging()) {
             //System.out.println("attacking again: " + moveTimer);
             return curMove;
         }
@@ -118,6 +134,21 @@ public class MoveHandler {
 
     public boolean currentlyAttacking() {
         return curMove instanceof Attack;
+    }
+
+    public boolean charging() {
+        if (curMove instanceof ChargeAttack ca) {
+            return ca.charging();
+        }
+        return false;
+    }
+
+    public InputType attackButton(MoveType moveType) {
+        String moveName = moveType.name();
+        int nameLength = moveName.length();
+        if (moveName.substring(nameLength - 6).equals("ATTACK")) return InputType.NORMAL;
+        if (moveName.substring(nameLength - 7).equals("SPECIAL")) return InputType.SPECIAL;
+        return null;
     }
 
     public void setPressed(InputType inputType) {

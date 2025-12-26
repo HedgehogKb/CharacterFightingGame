@@ -11,11 +11,16 @@ public class AnimationFrame {
     public BufferedImage sprite;
     public double duration;
     public ArrayList<TubeHitbox> hurtboxes;
-    public ArrayList<AttackHitbox> attackHitboxs;
+    public ArrayList<AttackHitbox> attackHitboxes;
     //public List<Projectile> projectiles;
 
     public boolean changeXVel;
     public double xVel;
+    public boolean changeXAcc;
+    public double xAcc;
+
     public boolean changeYVel;
     public double yVel;
+    public boolean changeYAcc;
+    public double yAcc;
 }

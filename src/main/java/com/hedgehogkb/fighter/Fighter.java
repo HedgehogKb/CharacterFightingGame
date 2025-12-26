@@ -21,6 +21,11 @@ import com.hedgehogkb.keybinds.KeybindSettings.Keybinds;
 
 public class Fighter {
 
+    /**
+     * how much knockback impacts velocity;
+     */
+    private double weight;
+
     /*
      * These are basically final, but due to effects I'm leaving them
      * as not final
@@ -29,13 +34,13 @@ public class Fighter {
     /**
      * How long coyotee times lasts.
      */
-    private  double max_grounded_time;
+    private double max_grounded_time;
 
     /**
      * The maximum number of jumps can can be completed before touching on the ground again.
      * This includes the ground jump, so a value of 1 would be no air jumps.
      */
-    private  int max_jumps;
+    private int max_jumps;
 
     /**
      * How much xAcc decreases each second of a standing animation
@@ -160,7 +165,7 @@ public class Fighter {
     private void updateAnimationInformation(AnimationFrame curFrame) {
         int dirMultiplier = fighterFacing.getMultiplier();
         this.hurtboxes = curFrame.hurtboxes; //TODO: consider changing this to getter and setter rather than public fields
-        this.attackHitboxes = curFrame.attackHitboxs;
+        this.attackHitboxes = curFrame.attackHitboxes;
 
         if (curFrame.changeXVel) {
             posHandler.setXVel(curFrame.xVel * dirMultiplier);
