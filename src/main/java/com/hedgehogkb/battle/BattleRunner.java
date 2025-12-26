@@ -21,11 +21,20 @@ public class BattleRunner implements Runnable {
     private ArrayList<Fighter> fighters;
     private Stage stage;
     private ArrayList<Projectile> projectiles;
+    private BattlePanel panel;
 
     private final long TARGET_FPS = 1;
     private final long FRAME_TIME = 1_000_000_000 / TARGET_FPS; // in nanoseconds
 
     private boolean running = false;
+
+    public BattleRunner(BattlePanel panel, Stage stage, ArrayList<Fighter> fighters) {
+        this.panel = panel;
+        this.stage = stage;
+        this.fighters = fighters;
+
+        this.projectiles = new ArrayList<>();
+    }
 
     @Override
     public void run() {
@@ -301,11 +310,6 @@ public class BattleRunner implements Runnable {
     // RENDER METHOD \\
 
     private void render() {
-        //call battlePanel's repaint method.
-    }
-
-    public static void main(String[] args) {
-        Thread gameThread = new Thread(new BattleRunner(), "battle");
-        gameThread.start();
+       panel.drawFrame();
     }
 }

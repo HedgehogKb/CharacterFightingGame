@@ -9,6 +9,7 @@ import javax.swing.Timer;
 
 import com.hedgehogkb.fighter.Fighter;
 import com.hedgehogkb.fighter.PositionHandler;
+import com.hedgehogkb.fighter.animation.Animation;
 import com.hedgehogkb.fighter.animation.AnimationHandler;
 import com.hedgehogkb.fighter.moves.Attack;
 import com.hedgehogkb.fighter.moves.ChargeAttack;
@@ -25,7 +26,8 @@ public class InputTest {
     public static boolean charging = false;
     public static void main(String[] args) {
         KeybindSettings keybindSettings = new KeybindSettings();
-        AnimationHandler animHandler = new AnimationHandler();
+        HashMap<MoveType, Animation> animations = new HashMap<>();
+        AnimationHandler animHandler = new AnimationHandler(animations);
         HashMap<MoveType, Move> moves = new HashMap<>();
 
         for (MoveType moveType : MoveType.values()) {
@@ -52,7 +54,10 @@ public class InputTest {
         //Move move = null;
        
         Timer timer = new Timer(1000/30, e -> {
-            Move curMove = moveHandler.getCurMove(0.033, 0.066, 0.066, 2, 2, 0);
+            if (move instanceof Attack a) {
+                a.advanceTimers(1.0/30.0);
+            }
+            Move curMove = moveHandler.getCurMove(1.0/30.0, 0.066, 0.066, 2, 2, 0);
             if (move == null || move != curMove || moveHandler.charging() != charging) {
                 move = curMove;
                 charging = moveHandler.charging();

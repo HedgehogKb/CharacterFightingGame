@@ -37,10 +37,6 @@ public class MoveHandler {
         }
         curMove = newMove;
 
-        if (curMove instanceof Attack a) {
-            a.advanceTimers(deltaTime);
-        }
-
         if (charging()) {
             boolean attackButtonDown = holding.get(attackButton(curMove.getMoveType()));
             if (!attackButtonDown) {
@@ -65,6 +61,7 @@ public class MoveHandler {
         // If already attacking then return the current move
         if ((currentlyAttacking() && moveTimer <= curMove.getDuration()) || charging()) {
             //System.out.println("attacking again: " + moveTimer);
+
             return curMove;
         }
 

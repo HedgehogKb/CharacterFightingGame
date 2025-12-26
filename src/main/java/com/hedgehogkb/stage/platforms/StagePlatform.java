@@ -11,9 +11,12 @@ import com.hedgehogkb.fighter.Fighter;
 import com.hedgehogkb.hitboxes.RectHitbox;
 
 public abstract class StagePlatform {
-    private Image sprite;
-    private BufferedImage image;
+    private BufferedImage sprite;
     private ArrayList<RectHitbox> hitboxes;
+
+    public StagePlatform() {
+        hitboxes = new ArrayList<>();
+    }
 
     /**
      * extending methods can override this if they want to add their own logic like
@@ -35,6 +38,14 @@ public abstract class StagePlatform {
             }
         }
         return collision;
+    }
+
+    public void addHitbox(RectHitbox rectHitbox) {
+        hitboxes.add(rectHitbox);
+    }
+
+    public ArrayList<RectHitbox> getHitboxes() {
+        return hitboxes;
     }
 
     /**

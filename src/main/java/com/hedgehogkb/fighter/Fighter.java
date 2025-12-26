@@ -130,19 +130,11 @@ public class Fighter {
     }
 
     public void update(double deltaTime) {
-        if (groundedCountdown > 0) {
-            groundedCountdown -= deltaTime;
-        }
-        if (invincibleCountdown > 0) {
-            invincibleCountdown -= deltaTime;
-        }
-        if (stunCountdown > 0) {
-            stunCountdown -= deltaTime;
-        }
+        if (groundedCountdown > 0) groundedCountdown -= deltaTime;
+        if (invincibleCountdown > 0) invincibleCountdown -= deltaTime;
+        if (stunCountdown > 0) stunCountdown -= deltaTime;
 
-        if (attack != null) {
-            attack.advanceTimers(deltaTime);
-        }
+        if (attack != null) attack.advanceTimers(deltaTime);
 
         Move newMove = moveHandler.getCurMove(deltaTime, groundedCountdown, max_grounded_time, jumps, max_jumps, stunCountdown);
 
@@ -158,7 +150,8 @@ public class Fighter {
                 jumps++;
             }
         }
-        AnimationFrame curFrame = animHandler.getCurrentFrame(deltaTime);
+
+        AnimationFrame curFrame = animHandler.getCurrentFrame(deltaTime, moveHandler.charging());
         updateAnimationInformation(curFrame);
     }
 
@@ -167,12 +160,10 @@ public class Fighter {
         this.hurtboxes = curFrame.hurtboxes; //TODO: consider changing this to getter and setter rather than public fields
         this.attackHitboxes = curFrame.attackHitboxes;
 
-        if (curFrame.changeXVel) {
-            posHandler.setXVel(curFrame.xVel * dirMultiplier);
-        }
-        if (curFrame.changeYVel) {
-            posHandler.setYVel(curFrame.yVel * dirMultiplier);
-        }
+        if (curFrame.changeXVel) posHandler.setXVel(curFrame.xVel * dirMultiplier);
+        if (curFrame.changeYVel) posHandler.setYVel(curFrame.yVel * dirMultiplier);
+        if (curFrame.changeXAcc) posHandler.setXAcc(curFrame.xAcc * dirMultiplier);
+        if (curFrame.changeYAcc) posHandler.setYAcc(curFrame.yAcc * dirMultiplier);
 
         this.sprite = curFrame.sprite;
     }

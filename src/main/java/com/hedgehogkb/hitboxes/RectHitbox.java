@@ -9,6 +9,12 @@ public class RectHitbox implements LocalHitbox<RectHitbox> {
     private double width;
     private double heigth;
 
+    public RectHitbox(double centerX, double centerY, double width, double height) {
+        baseCenter = new Point2D.Double(centerX, centerY);
+        this.width = width;
+        this.heigth = height;
+    }
+
     @Override
     public boolean intersects(RectHitbox o) {        
        return intersects(0,0, Direction.RIGHT, o,0,0, Direction.RIGHT);
