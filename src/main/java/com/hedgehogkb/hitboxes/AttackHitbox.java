@@ -17,6 +17,13 @@ public class AttackHitbox extends TubeHitbox{
         knockback = new Vector2<>(0.0, 0.0);
     }
 
+    public AttackHitbox(double center1X, double center1Y, double center2X, double center2Y, double radius) {
+        super(center1X, center1Y, center2X, center2Y, radius);
+        damage = 0;
+        stunDuration = 0;
+        knockback = new Vector2<Double>(0.0,0.0);
+    }
+
     public AttackHitbox(Point2D circle1, Point2D circle2, double radius, double damage, double stunDuration, double knockbackAmount, double knockbackDirection) {
         super(circle1, circle2, radius);
         this.damage = damage;

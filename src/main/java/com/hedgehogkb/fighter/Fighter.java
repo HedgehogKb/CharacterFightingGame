@@ -107,7 +107,7 @@ public class Fighter {
     
 
 
-    public Fighter(KeybindSettings keySettings, AnimationHandler animHandler, MoveHandler moveHandler, PositionHandler posHandler, int stocks) {
+    public Fighter(Keybinds keybinds, AnimationHandler animHandler, MoveHandler moveHandler, PositionHandler posHandler, int stocks) {
         this.max_grounded_time = 0.066;
         this.max_jumps = 2;
 
@@ -115,7 +115,11 @@ public class Fighter {
         this.moveHandler = moveHandler;
         this.posHandler = posHandler;
         this.inputDetector = new InputDetector();
-        this.keybinds = keySettings.getKeybinds(1);
+        this.keybinds = keybinds;
+
+        enviromentHitbox = new RectHitbox(0,0,32,58);
+        hurtboxes = new ArrayList<>();
+        attackHitboxes = new ArrayList<>();
 
         this.groundedCountdown = 0;
 
@@ -130,12 +134,10 @@ public class Fighter {
     }
 
     public void update(double deltaTime) {
-        if (groundedCountdown > 0) groundedCountdown -= deltaTime;
-        if (invincibleCountdown > 0) invincibleCountdown -= deltaTime;
-        if (stunCountdown > 0) stunCountdown -= deltaTime;
+        //refresh default movement information
+        posHandler.setYAcc(128); //keep in mind that positive 10 is downward.
 
-        if (attack != null) attack.advanceTimers(deltaTime);
-
+        //find what move the player should be doing rn
         Move newMove = moveHandler.getCurMove(deltaTime, groundedCountdown, max_grounded_time, jumps, max_jumps, stunCountdown);
 
         if (newMove != curMove) { //TODO: getCurMove method needs to take some stuff in. like being stunned or grounded
@@ -151,8 +153,16 @@ public class Fighter {
             }
         }
 
+        //update animation information
         AnimationFrame curFrame = animHandler.getCurrentFrame(deltaTime, moveHandler.charging());
         updateAnimationInformation(curFrame);
+
+        //advance timers
+        if (groundedCountdown > 0) groundedCountdown -= deltaTime;
+        if (invincibleCountdown > 0) invincibleCountdown -= deltaTime;
+        if (stunCountdown > 0) stunCountdown -= deltaTime;
+
+        if (attack != null) attack.advanceTimers(deltaTime);
     }
 
     private void updateAnimationInformation(AnimationFrame curFrame) {
@@ -221,7 +231,6 @@ public class Fighter {
 
 
     //Getters and setters
-
     public double getXPos() {
         return posHandler.getXPos();
     }
@@ -233,7 +242,7 @@ public class Fighter {
         return posHandler.getYPos();
     }
     public void setYPos(double yPos) {
-        posHandler.setYAcc(yPos);
+        posHandler.setYPos(yPos);
     }
 
     public double getXVel() {
@@ -277,27 +286,80 @@ public class Fighter {
         return this.effects;
     }
 
+    public BufferedImage getSprite() {
+        return this.sprite;
+    }
+
     //Player Stats Getters and Setters
 
+    public double getWeight() {
+        return weight;
+    }
+    public void setWeight(double weight) {
+        this.weight = weight;
+    }
+
+    public double getMaxGroundedTime() {
+        return max_grounded_time;
+    }
+    public void setMaxGroundedTime(double maxGroundedTime) {
+        this.max_grounded_time = maxGroundedTime;
+    }
+
+    public int getMaxJumps() {
+        return max_jumps;
+    }
+    public void setMaxJumps(int maxJumps) {
+        this.max_jumps = maxJumps;
+    }
+
+    public double getStandingDecel() {
+        return standing_decel;
+    }
+    public void setStandingDecel(double standingDecel) {
+        this.standing_decel = standingDecel;
+    }
+
+    public double getAirDecel() {
+        return air_decel;
+    }
+    public void setAirDecel(double airDecel) {
+        this.air_decel = airDecel;
+    }
+
     public double getWalkingAcc() {
-        return this.walking_acc;
+        return walking_acc;
     }
     public void setWalkingAcc(double walkingAcc) {
         this.walking_acc = walkingAcc;
     }
 
+    public double getMaxWalkingVel() {
+        return max_walking_vel;
+    }
+    public void setMaxWalkingVel(double maxWalkingVel) {
+        this.max_walking_vel = maxWalkingVel;
+    }
+
     public double getSprintingAcc() {
-        return this.sprinting_acc;
+        return sprinting_acc;
     }
     public void setSprintingAcc(double sprintingAcc) {
         this.sprinting_acc = sprintingAcc;
     }
 
-    public double getStandingDecel() {
-        return this.standing_decel;
+    public double getMaxSprintingVel() {
+        return max_sprinting_vel;
     }
-    public void setStandingDecel(double standingDecel) {
-        this.standing_decel = standingDecel;
+    public void setMaxSprintingVel(double maxSprintingVel) {
+        this.max_sprinting_vel = maxSprintingVel;
+    }
+
+    public double getMaxYVel() {
+        return max_y_vel;
+    }
+    public void setMaxYVel(double maxYVel) {
+        this.max_y_vel = maxYVel;
     }
 
     // PRIVATE CLASSES

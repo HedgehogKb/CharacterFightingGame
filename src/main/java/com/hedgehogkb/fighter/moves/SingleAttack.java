@@ -65,4 +65,8 @@ public class SingleAttack implements Attack{
     public MoveType getMoveType() {
        return this.moveType;
     }
+
+    public double getRehitDuration() {
+        return this.REHIT_DURAITON;
+    }
 }

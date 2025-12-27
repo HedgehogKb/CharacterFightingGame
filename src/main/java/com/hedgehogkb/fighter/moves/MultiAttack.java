@@ -53,9 +53,16 @@ public class MultiAttack implements Attack {
     public double getDuration() {
         return durations[curDurationIndex];
     }
+    public double[] getDurations() {
+        return this.durations;
+    }
 
     @Override
     public MoveType getMoveType() {
         return this.moveType;
+    }
+
+    public double[] getRehitDurations() {
+        return REHIT_DURATIONS;
     }
 }

@@ -25,14 +25,14 @@ public class RectHitbox implements LocalHitbox<RectHitbox> {
                // Calculate bounds for this rectangle (center base)
         double thisLeft = baseCenter.getX() - width / 2 + xOffset;
         double thisRight = baseCenter.getX() + width / 2 + xOffset;
-        double thisBottom = baseCenter.getY() + yOffset;
-        double thisTop = baseCenter.getY() - heigth + yOffset;
+        double thisBottom = -1 * (baseCenter.getY() + yOffset);
+        double thisTop = -1 * (baseCenter.getY() - heigth + yOffset);
         
         // Calculate bounds for other rectangle
         double otherLeft = o.baseCenter.getX() - o.width / 2 + oXOffset;
         double otherRight = o.baseCenter.getX() + o.width / 2 + oXOffset;
-        double otherBottom = o.baseCenter.getY() + oYOffset;
-        double otherTop = o.baseCenter.getY() - o.heigth + oYOffset;
+        double otherBottom = -1 * (o.baseCenter.getY() + oYOffset);
+        double otherTop = -1 * (o.baseCenter.getY() - o.heigth + oYOffset);
 
         return ((thisLeft <= otherLeft && thisRight >= otherLeft) 
                 || (thisLeft <= otherRight && thisRight >= otherRight))

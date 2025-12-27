@@ -1,56 +1,253 @@
 {
-    "name": "Marnie",
-    "type": "character",
-    "spritesheet": "Marnie",
     "stats": {
-        "weight": 5,
-        "walk speed": 128,
+        "max jumps": 2,
+        "max grounded time": 0.067,
+        "air deceleration": 100,
+        "sprint speed": 360,
         "ground deceleration": 256,
-        "air deceleration": 128
+        "weight": 10,
+        "max y velocity": 400,
+        "walk speed": 128
     },
-    "passive": ["awareness"],
     "moves": {
-        "standing" : {
-            "type": "attack",
+        "NORMAL_ATTACK": {
+            "animations": [
+                {
+                    "frames": [{
+                        "duration": 0.03333333333333333,
+                        "hurtboxes": [{
+                            "center 2": [
+                                40.11111111111112,
+                                39.6666666666667
+                            ],
+                            "center 1": [
+                                38,
+                                21.777777777777775
+                            ],
+                            "radius": 5
+                        }],
+                        "hitboxes": [{
+                            "damage": 0,
+                            "knockback amount": 0,
+                            "knockback angle": 0,
+                            "center 2": [
+                                34.444444444444436,
+                                37.33333333333332
+                            ],
+                            "center 1": [
+                                27.666666666666668,
+                                30.5555555555555
+                            ],
+                            "stun duration": 0,
+                            "radius": 5
+                        }],
+                        "sprite": {
+                            "start y": 128,
+                            "start x": 64,
+                            "width": 64,
+                            "height": 64
+                        }
+                    }],
+                    "index": 0
+                },
+                {
+                    "frames": [{
+                        "duration": 0.03333333333333333,
+                        "hurtboxes": [{
+                            "center 2": [
+                                35.66666666666667,
+                                39.22222222222224
+                            ],
+                            "center 1": [
+                                37.44444444444444,
+                                20.99999999999998
+                            ],
+                            "radius": 5
+                        }],
+                        "hitboxes": [{
+                            "damage": 0,
+                            "knockback amount": 0,
+                            "knockback angle": 0,
+                            "center 2": [
+                                46.66666666666659,
+                                31.111111111111075
+                            ],
+                            "center 1": [
+                                42.888888888888864,
+                                23.555555555555546
+                            ],
+                            "stun duration": 0,
+                            "radius": 3
+                        }],
+                        "sprite": {
+                            "start y": 192,
+                            "start x": 64,
+                            "width": 64,
+                            "height": 64
+                        }
+                    }],
+                    "index": 1
+                }
+            ],
+            "type": "move",
+            "variation": true
+        },
+        "IDLE": {
             "frames": [
                 {
-                    "x velocity": 0,
-                    "x acceleration": 0,
-
-                    "y velocity": 0,
-                    "y acceleration": 0,
-                    "sprite information": {
-                        "sprite x": 0,
-                        "sprite y": 0,
+                    "duration": 1,
+                    "hurtboxes": [],
+                    "hitboxes": [],
+                    "sprite": {
+                        "start y": 0,
+                        "start x": 64,
                         "width": 64,
                         "height": 64
-                    },
-                    "duration": 1,
+                    }
+                },
+                {
+                    "duration": 0.2,
                     "hurtboxes": [
                         {
-                            "center 1": [0,0],
-                            "center 2": [64,64],
+                            "center 2": [
+                                37.99999999999997,
+                                39.77777777777775
+                            ],
+                            "center 1": [
+                                37.33333333333332,
+                                24.555555555555532
+                            ],
                             "radius": 5
                         },
                         {
-                            "center 1": [32,0],
-                            "center 2": [32,64],
+                            "center 2": [
+                                37.55555555555556,
+                                18.888888888888882
+                            ],
+                            "center 1": [
+                                38.88888888888891,
+                                13.777777777777771
+                            ],
                             "radius": 4
-
+                        },
+                        {
+                            "center 2": [
+                                28.555555555555568,
+                                30.333333333333364
+                            ],
+                            "center 1": [
+                                31.88888888888889,
+                                21.88888888888888
+                            ],
+                            "radius": 2
+                        },
+                        {
+                            "center 2": [
+                                30.000000000000007,
+                                40.22222222222221
+                            ],
+                            "center 1": [
+                                28.44444444444445,
+                                31.444444444444436
+                            ],
+                            "radius": 2
+                        },
+                        {
+                            "center 2": [
+                                44.666666666666686,
+                                59.33333333333332
+                            ],
+                            "center 1": [
+                                40.99999999999995,
+                                38.44444444444447
+                            ],
+                            "radius": 3
+                        },
+                        {
+                            "center 2": [
+                                32.22222222222222,
+                                59.33333333333336
+                            ],
+                            "center 1": [
+                                36.33333333333336,
+                                39.44444444444444
+                            ],
+                            "radius": 3
                         }
                     ],
-                    "attack hitboxes": [
-                        {
-                            "center 1": [64,42],
-                            "center 2": [48,42],
-                            "radius": 3,
-                            "damage": 10
-                        }
-                    ]
+                    "hitboxes": [],
+                    "sprite": {
+                        "start y": 0,
+                        "start x": 128,
+                        "width": 64,
+                        "height": 64
+                    }
                 },
-                {}
-            ]
+                {
+                    "duration": 0.2,
+                    "hurtboxes": [],
+                    "hitboxes": [],
+                    "sprite": {
+                        "start y": 0,
+                        "start x": 192,
+                        "width": 64,
+                        "height": 64
+                    }
+                },
+                {
+                    "duration": 1,
+                    "hurtboxes": [],
+                    "hitboxes": [],
+                    "sprite": {
+                        "start y": 0,
+                        "start x": 256,
+                        "width": 64,
+                        "height": 64
+                    }
+                },
+                {
+                    "duration": 0.2,
+                    "hurtboxes": [],
+                    "hitboxes": [],
+                    "sprite": {
+                        "start y": 0,
+                        "start x": 320,
+                        "width": 64,
+                        "height": 64
+                    }
+                },
+                {
+                    "duration": 0.2,
+                    "hurtboxes": [],
+                    "hitboxes": [],
+                    "sprite": {
+                        "start y": 0,
+                        "start x": 384,
+                        "width": 64,
+                        "height": 64
+                    }
+                }
+            ],
+            "type": "move",
+            "variation": false
+        },
+        "STANDING": {
+            "frames": [{
+                "duration": 0.03333333333333333,
+                "hurtboxes": [],
+                "hitboxes": [],
+                "sprite": {
+                    "start y": 64,
+                    "start x": 64,
+                    "width": 64,
+                    "height": 64
+                }
+            }],
+            "type": "move",
+            "variation": false
         }
-    }
-
+    },
+    "name": "Marnie",
+    "type": "character",
+    "spritesheet": "Marnie"
 }

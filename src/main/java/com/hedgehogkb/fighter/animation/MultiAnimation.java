@@ -40,7 +40,7 @@ public class MultiAnimation implements Animation {
             curAnimationIndex++;
         }
 
-        curAnimation = animations.get(curAnimationIndex);
+        if(animations.size() > 0) curAnimation = animations.get(curAnimationIndex);
 
         elapsedTime = 0;
         curAnimationIndex = 0;
@@ -53,6 +53,8 @@ public class MultiAnimation implements Animation {
             throw new IllegalStateException("Animation hasn't been started yet");
         }
 
+        if (curAnimation == null) return new AnimationFrame(); //TODO: this is for testing
+
         elapsedTime = (elapsedTime + deltaTime) % ANIMATION_DURATIONS[curAnimationIndex];
         
         if (elapsedTime > nextEndTime) {
@@ -61,6 +63,12 @@ public class MultiAnimation implements Animation {
             nextEndTime = curAnimation.get(curAnimationIndex).duration;
         }
 
+
         return curAnimation.get(curAnimationIndex);
+    }
+
+    // Getters and Setters
+    public double[] getDurations() {
+        return this.ANIMATION_DURATIONS;
     }
 }

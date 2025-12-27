@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Toolkit;
 import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import com.hedgehogkb.fighter.Fighter;
@@ -54,7 +55,7 @@ public class BattleCanvas {
     }
 
     public double calculateScale() {
-        double pixelWidth = 64*10;
+        double pixelWidth = 64*7;
         double screenWidth = canvas.getWidth();
         return screenWidth / pixelWidth;
     }
@@ -63,18 +64,34 @@ public class BattleCanvas {
         g2d.setColor(Color.red);
         for (StagePlatform platform : stage.getPermanentPlatforms()) {
             for (RectHitbox hitbox : platform.getHitboxes()) {
+               drawRectHitbox(g2d, hitbox, scale);
+            }
+        }
+    }
+
+    public void drawFighters(Graphics2D g2d, double scale) {
+        g2d.setColor(Color.GREEN);
+        for (Fighter fighter : fighters) {
+            drawRectHitbox(g2d, fighter.getEnviromentHitbox(), scale);
+            BufferedImage sprite = fighter.getSprite();
+            if (sprite != null) {
+                double width = sprite.getWidth() * scale;
+                double height = sprite.getHeight() * scale;
+                double centerX = fighter.getXPos() * scale + 0.5 * canvas.getWidth();
+                double centerY = fighter.getYPos() * scale + 0.5 * canvas.getHeight();
+
+                g2d.drawImage(sprite, (int) (centerX - 0.5 * width), (int) (centerY - height), (int) width, (int) height, null);
+            }
+        }
+    }
+
+    public void drawRectHitbox(Graphics2D g2d, RectHitbox hitbox, double scale) {
                 double width = hitbox.getWidth() * scale;
                 double height = hitbox.getHeight() * scale;
                 double centerX = hitbox.getCenterX() * scale + 0.5 * canvas.getWidth();
                 double centerY = hitbox.getCenterY() * scale + 0.5 * canvas.getHeight();
 
                 g2d.fillRect((int) (centerX - 0.5 * width), (int) (centerY - height), (int) width, (int) height);
-            }
-        }
-    }
-
-    public void drawFighters(Graphics2D g2d, double scale) {
-
     }
 
     public Canvas getCanvas() {

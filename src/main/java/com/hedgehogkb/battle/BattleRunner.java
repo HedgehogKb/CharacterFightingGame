@@ -23,7 +23,7 @@ public class BattleRunner implements Runnable {
     private ArrayList<Projectile> projectiles;
     private BattlePanel panel;
 
-    private final long TARGET_FPS = 1;
+    private final long TARGET_FPS = 30;
     private final long FRAME_TIME = 1_000_000_000 / TARGET_FPS; // in nanoseconds
 
     private boolean running = false;
@@ -40,37 +40,37 @@ public class BattleRunner implements Runnable {
     public void run() {
         running = true;
 
+        long lastTime = System.nanoTime();
+        long accumulator = 0;
+
         while (running) {
-            long lastTime = System.nanoTime();
-            long accumulator = 0;
+            long now = System.nanoTime();
+            long delta = now - lastTime;
+            lastTime = now;
 
-            while (running) {
-                long now = System.nanoTime();
-                long delta = now - lastTime;
-                lastTime = now;
+            accumulator += delta;
 
-                accumulator += delta;
+            // update a ideal frame duration until the game is caught up.
+            // this prevents lag from slowing down actual gameplay. For example if
+            // it takes 10 frames to render for some reason, 10 updates will happen here.
+            while (accumulator >= FRAME_TIME) {
+                update(FRAME_TIME / 1_000_000_000.0);
+                accumulator -= FRAME_TIME;
+            }
 
-                // update a ideal frame duration until the game is caught up.
-                // this prevents lag from slowing down actual gameplay. For example if
-                // it takes 10 frames to render for some reason, 10 updates will happen here.
-                while (accumulator >= FRAME_TIME) {
-                    update(FRAME_TIME / 1_000_000_000.0);
-                    accumulator -= FRAME_TIME;
-                }
+            //System.out.println("running");
 
-                render();
+            render();
 
-                // Sleep for the remaining time in the frame.
-                long sleepTime = FRAME_TIME - (System.nanoTime() - now);
-                if (sleepTime > 0) {
-                    try {
-                        Thread.sleep(
-                            sleepTime / 1_000_000,
-                            (int)(sleepTime % 1_000_000)
-                        );
-                    } catch (InterruptedException ignored) {}
-                }
+            // Sleep for the remaining time in the frame.
+            long sleepTime = FRAME_TIME - (System.nanoTime() - now);
+            if (sleepTime > 0) {
+                try {
+                    Thread.sleep(
+                        sleepTime / 1_000_000,
+                        (int)(sleepTime % 1_000_000)
+                    );
+                } catch (InterruptedException ignored) {}
             }
         }
     }
@@ -95,17 +95,20 @@ public class BattleRunner implements Runnable {
             // move fighter in X
             fighter.moveX(deltaTime);
             //detect and handle collisions
+            boolean collidedX = false;
             do {
                 collisions = checkStageHitboxCollision(fighter, T -> !(T instanceof PhysicalPlatform));
                 if (!collisions.isEmpty()) {
+                    System.out.println("colliding x");
                     handleXStageCollision(fighter, collisions);
-                    fighter.setXVel(0);
+                    collidedX = true;
                 }
             } while (!collisions.isEmpty());
-            
+            if (collidedX) fighter.setXVel(0);
             // move fighter in Y
             fighter.moveY(deltaTime);
             //detect and handle collisions
+            boolean collidedY = false;
             do {
                 collisions = checkStageHitboxCollision(fighter, T -> !(T instanceof PhysicalPlatform));
                 if (!collisions.isEmpty()) {
@@ -113,10 +116,10 @@ public class BattleRunner implements Runnable {
                         fighter.setGrounded();
                     }
                     handleYStageCollision(fighter, collisions);
-                    fighter.setYVel(0);
+                    collidedY = true;
                 }
             } while (!collisions.isEmpty());
-        
+            if (collidedY) fighter.setYVel(0);
         
             // check for remaining collisions and apply effects (create a per-fighter instance)
             for (StagePlatform platform : checkStageCollision(fighter, T -> true)) {
@@ -230,7 +233,7 @@ public class BattleRunner implements Runnable {
     }
 
     private void handleYStageCollision(Fighter fighter, ArrayList<RectHitbox> collidingHitboxes) {
-        double directionSign = Math.signum(fighter.getXVel()); //normally takes fighter.getXVelo() in signum
+        double directionSign = Math.signum(fighter.getYVel()); //normally takes fighter.getXVelo() in signum
         if (directionSign == 0) {
             throw new IllegalStateException("Cannot handle stage collision if fighter is not moving.");
         }
@@ -251,7 +254,7 @@ public class BattleRunner implements Runnable {
             initialized = true;
         }
 
-        double adjustedPosition = furthestHitboxDir + fighter.getEnviromentHitbox().getHeight() * 0.5 * ((directionSign > 0)? 0 : 1) - directionSign;
+        double adjustedPosition = furthestHitboxDir + (fighter.getEnviromentHitbox().getHeight() * 0.5)* ((directionSign > 0)? 0 : 1) - directionSign*0.01;
         fighter.setYPos(adjustedPosition);
     }
 
@@ -277,7 +280,7 @@ public class BattleRunner implements Runnable {
             double yOffset = curFighter.getYPos();
             Direction direction = curFighter.getFighterDirection();
             //loop over all of the other fighters
-            for (int v = 0; v < fighters.size(); i++) {
+            for (int v = 0; v < fighters.size(); v++) {
                 if (v == i) continue;
                 Fighter oFighter = fighters.get(v);
                 

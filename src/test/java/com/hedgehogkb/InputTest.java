@@ -25,7 +25,6 @@ public class InputTest {
     public static Move move = null;
     public static boolean charging = false;
     public static void main(String[] args) {
-        KeybindSettings keybindSettings = new KeybindSettings();
         HashMap<MoveType, Animation> animations = new HashMap<>();
         AnimationHandler animHandler = new AnimationHandler(animations);
         HashMap<MoveType, Move> moves = new HashMap<>();
@@ -40,9 +39,9 @@ public class InputTest {
         moves.put(MoveType.NAIR_ATTACK, new SingleAttack(MoveType.NAIR_ATTACK, 1, 5));
         moves.put(MoveType.FORWARD_ATTACK, new ChargeAttack(MoveType.FORWARD_ATTACK,5,1,5, d -> 1+d));
         MoveHandler moveHandler = new MoveHandler(moves);
-        PositionHandler positionHandler = new PositionHandler(0,0,256,256);
+        PositionHandler positionHandler = new PositionHandler(0,0);
 
-        Fighter fighter = new Fighter(keybindSettings, animHandler, moveHandler, positionHandler, 3);
+        Fighter fighter = new Fighter(KeybindSettings.getKeybinds(1), animHandler, moveHandler, positionHandler, 3);
 
         JFrame frame = new JFrame();
         frame.setSize(800,600);

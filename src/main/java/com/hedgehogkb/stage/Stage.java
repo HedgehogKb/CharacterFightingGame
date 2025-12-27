@@ -23,7 +23,7 @@ public class Stage {
         decayingPlatforms = new ArrayList<>();
 
         PhysicalPlatform platform = new PhysicalPlatform();
-        RectHitbox hitbox = new RectHitbox(0, 64, 64*9, 64);
+        RectHitbox hitbox = new RectHitbox(0, 64, 64*6.7, 64);
         platform.addHitbox(hitbox);
         
         permanentPlatforms.add(platform);

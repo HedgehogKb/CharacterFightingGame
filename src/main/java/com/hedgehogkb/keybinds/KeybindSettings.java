@@ -4,6 +4,7 @@ import java.awt.event.KeyEvent;
 import java.util.HashMap;
 
 public class KeybindSettings {
+    public static int MAX_PLAYERS = 2;
     public static class Keybinds {
         private HashMap<Integer, InputType> keybinds;
 
@@ -52,7 +53,8 @@ public class KeybindSettings {
      * @param player
      * @return
      */
-    public Keybinds getKeybinds(int player) {
+    public static Keybinds getKeybinds(int player) {
+        if (player > MAX_PLAYERS) throw new IllegalArgumentException("Can't have more than " + MAX_PLAYERS + "players.");
         return new Keybinds(player);
     }
 }

@@ -31,6 +31,7 @@ public class MoveHandler {
 
     public Move getCurMove(double deltaTime, double groundedCooldown, double maxGroundedCooldown, int jumps, int maxJumps, double stunCooldown) {
         Move newMove = resolveCurMove(deltaTime, groundedCooldown, maxGroundedCooldown, jumps, maxJumps, stunCooldown);
+        if (newMove == null) return moves.get(MoveType.IDLE);
         if (curMove != newMove) {
             newMove.startMove();
             moveTimer = 0;
@@ -159,5 +160,9 @@ public class MoveHandler {
         } else if (inputType == InputType.SPECIAL) {
             specialReset = true;
         }
+    }
+
+    public Move getTestMove() {
+        return moves.get(MoveType.IDLE);
     }
 }

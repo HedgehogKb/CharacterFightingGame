@@ -12,7 +12,8 @@ public class SingleAnimation implements Animation {
 
     public SingleAnimation(ArrayList<AnimationFrame> frames) {
         if (frames.isEmpty()) {
-            throw new IllegalArgumentException("animaiton must have at least 1 frame");
+            //TODO: add this back when done testing.
+            //throw new IllegalArgumentException("animaiton must have at least 1 frame");
         }
 
         this.frames = frames;
@@ -41,8 +42,15 @@ public class SingleAnimation implements Animation {
             throw new IllegalStateException("Animation hasn't been started");
         }
 
+        if (frames.size() <= 0) return new AnimationFrame();
+
         //loops animation. MoveHanlder is responsible for actually stopping moves.
-        elapsedTime = (elapsedTime + deltaTime) % ANIMATION_DURATION; 
+        elapsedTime += deltaTime;
+        if (elapsedTime > ANIMATION_DURATION) {
+            elapsedTime = 0;
+            currentFrameIndex = 0;
+            nextEndTime = frames.get(0).duration;
+        }
 
         // responsible for advancing or restarting the current frame index.
         // also sets the nextEndTime to the new frame
@@ -58,5 +66,10 @@ public class SingleAnimation implements Animation {
         }
 
         return frames.get(currentFrameIndex);
+    }
+
+    // GETTERS AND SETTERS
+    public double getDuration() {
+        return this.ANIMATION_DURATION;
     }
 }

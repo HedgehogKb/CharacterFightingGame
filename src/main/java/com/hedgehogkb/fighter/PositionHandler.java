@@ -10,12 +10,9 @@ public class PositionHandler {
     private double xAcc;
     private double yAcc;
 
-    private double defaultXAcc; //will be used to set the acceleration back to normal after moving
-    private double defaultYAcc;
-
-    public PositionHandler(double xPos, double yPos, double maxXVel, double maxYVel) {        
+    public PositionHandler(double xPos, double yPos) {    
         this.xPos = xPos;
-        this.yPos = yPos;
+        this.yPos = yPos;    
         this.xVel = 0;
         this.yVel = 0;
         this.xAcc = 0;
@@ -32,6 +29,8 @@ public class PositionHandler {
         // Update velocities based on acceleration
         if (deceleration > 0) {
             xVel += deceleration * dirMultiplier * deltaTime;
+            if (dirMultiplier > 0) xVel = Math.min(0, xVel);
+            if (dirMultiplier < 0) xVel = Math.max(0, xVel);
         } else {
             xVel += xAcc * deltaTime;
         }

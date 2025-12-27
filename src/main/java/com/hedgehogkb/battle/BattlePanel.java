@@ -41,6 +41,10 @@ public class BattlePanel {
         
         canvas = new BattleCanvas(stage, fighters);
         panel.add(canvas.getCanvas(), java.awt.BorderLayout.CENTER);
+
+        for (Fighter fighter : fighters) {
+            panel.addKeyListener(fighter.getInputDetector());
+        }
     }
 
     public void drawFrame() {

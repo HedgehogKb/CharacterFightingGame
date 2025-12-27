@@ -10,8 +10,8 @@ import com.hedgehogkb.hitboxes.TubeHitbox;
 public class AnimationFrame {
     public BufferedImage sprite;
     public double duration;
-    public ArrayList<TubeHitbox> hurtboxes;
-    public ArrayList<AttackHitbox> attackHitboxes;
+    public ArrayList<TubeHitbox> hurtboxes = new ArrayList<>();
+    public ArrayList<AttackHitbox> attackHitboxes = new ArrayList<>();
     //public List<Projectile> projectiles;
 
     public boolean changeXVel;
